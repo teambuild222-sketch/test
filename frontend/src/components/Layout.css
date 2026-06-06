@@ -1424,4 +1424,11 @@
     padding-right: 16px;
     padding-bottom: calc(var(--nav-height) + 16px);
   }
+
+  .zenex-sidebar {
+    display: none !important;
+    visibility: hidden;
+    width: 0;
+    pointer-events: none;
+  }
 }

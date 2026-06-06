@@ -20,10 +20,6 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
   return (
     <nav className="bottom-navbar">
-      <div className="navbar-brand">
-        <img src="/logo.png" alt="ZENEX" className="navbar-logo" />
-        <span className="navbar-app-name">ZENEX</span>
-      </div>
       <div className="navbar-content">
         {navItems.map((item) => {
           const Icon = item.icon;

@@ -26,6 +26,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { MembershipModal, getSavedPlan, PLAN_CHANGE_EVENT, PlanType } from './Membership/Membership';
+import ExplorePage from './ExplorePage/ExplorePage';
 import './Layout.css';
 
 interface Message {
@@ -189,9 +190,10 @@ export const Layout: React.FC = () => {
   const activeChat = chatSessions.find((c) => c.id === activeChatId) || chatSessions[0];
 
   return (
-    <div className="zenex-app-shell">
+    <div className={`zenex-app-shell ${activeTab === 'explore' ? 'explore-active' : ''}`}>
       {/* Fixed Header */}
-      <header className="zenex-header">
+      {activeTab !== 'explore' && (
+        <header className="zenex-header">
         <div className="zenex-brand-group">
           {/* Logo element clickable to reset to home */}
           <div className="zenex-logo-pill" onClick={() => setActiveTab('home')} style={{ cursor: 'pointer' }}>
@@ -288,12 +290,13 @@ export const Layout: React.FC = () => {
           </div>
         </div>
       </header>
+      )}
 
       {/* Main Responsive Grid Layout */}
-      <div className={`zenex-layout-grid ${isSidebarOpen ? 'sidebar-expanded' : 'sidebar-collapsed'}`}>
+      <div className={`zenex-layout-grid ${activeTab === 'explore' ? 'explore-layout-grid' : ''} ${isSidebarOpen ? 'sidebar-expanded' : 'sidebar-collapsed'}`}>
         
         {/* Left Sidebar */}
-        <aside className={`zenex-sidebar ${isSidebarOpen ? 'expanded' : 'collapsed'}`}>
+        <aside className={`zenex-sidebar ${activeTab === 'explore' ? 'explore-sidebar-floating' : ''} ${isSidebarOpen ? 'expanded' : 'collapsed'}`}>
           <div className="zenex-sidebar-inner">
             {/* Sidebar Branding (Only on Desktop when expanded) */}
             <div className="zenex-sidebar-brand">
@@ -385,171 +388,7 @@ export const Layout: React.FC = () => {
         <main className="zenex-main-panel">
           
           {/* EXPLORE PAGE */}
-          {activeTab === 'explore' && (
-            <div className="explore-page-view animate-fadeIn">
-              <section className="zenex-hero-card glass-card">
-                <div className="hero-card-copy">
-                  <span className="hero-chip">Interactive Map & Players</span>
-                  <h2>Explore Page</h2>
-                  <p>Discover matches, sports complexes, and connect with players near you on our real-time radar.</p>
-                </div>
-                <div className="hero-card-icon">
-                  <Compass size={36} />
-                </div>
-              </section>
-
-              {/* Map Section Mockup */}
-              <section className="explore-map-container glass-card">
-                <div className="map-view-header">
-                  <span className="map-title">📍 HYDERABAD RADAR</span>
-                  <div className="map-filter-toggle">
-                    <button className="map-filter-btn active">All Pins</button>
-                    <button className="map-filter-btn">Players</button>
-                    <button className="map-filter-btn">Events</button>
-                  </div>
-                </div>
-
-                <div className="map-canvas-mock">
-                  {/* Grid Lines */}
-                  <div className="map-grid-lines" />
-                  
-                  {/* Decorative roads */}
-                  <div className="map-road road-h" />
-                  <div className="map-road road-v" />
-                  <div className="map-road road-diagonal" />
-
-                  {/* Pulsing center radar user */}
-                  <div className="map-user-center">
-                    <span className="center-dot-pulse" />
-                    <span className="center-dot" />
-                  </div>
-
-                  {/* Map Pins */}
-                  {/* Pin 1: Rahul Sharma */}
-                  <div className="map-pin-wrapper" style={{ top: '30%', left: '25%' }} onClick={() => toast('Rahul Sharma: Cricket Captain (1.2 km away)')}>
-                    <div className="map-pin player-pin">
-                      <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=80&h=80&q=80" alt="Rahul" className="pin-avatar" />
-                      <span className="pin-pulse" />
-                    </div>
-                    <span className="pin-tooltip">Rahul Sharma (Cricket)</span>
-                  </div>
-
-                  {/* Pin 2: Neha Reddy */}
-                  <div className="map-pin-wrapper" style={{ top: '65%', left: '75%' }} onClick={() => toast('Neha Reddy: Tennis Event Host (2.5 km away)')}>
-                    <div className="map-pin player-pin">
-                      <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&h=80&q=80" alt="Neha" className="pin-avatar" />
-                      <span className="pin-pulse" />
-                    </div>
-                    <span className="pin-tooltip">Neha Reddy (Tennis)</span>
-                  </div>
-
-                  {/* Pin 3: Football Match Event */}
-                  <div className="map-pin-wrapper" style={{ top: '25%', left: '60%' }} onClick={() => toast('Event: Sunday Football Match (Madhapur Turf, 1.2 km away)')}>
-                    <div className="map-pin event-pin">
-                      <span className="pin-emoji">⚽</span>
-                      <span className="pin-pulse event-pulse" />
-                    </div>
-                    <span className="pin-tooltip highlight">Sunday Football Match</span>
-                  </div>
-
-                  {/* Pin 4: Aisha Khan */}
-                  <div className="map-pin-wrapper" style={{ top: '80%', left: '40%' }} onClick={() => toast('Aisha Khan: Fitness Trainer (3.1 km away)')}>
-                    <div className="map-pin player-pin">
-                      <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=80&h=80&q=80" alt="Aisha" className="pin-avatar" />
-                      <span className="pin-pulse" />
-                    </div>
-                    <span className="pin-tooltip">Aisha Khan (Yoga)</span>
-                  </div>
-                </div>
-              </section>
-
-              {/* Live Search & Filter Bar */}
-              <div className="explore-search-container glass-card">
-                <Search className="search-bar-icon" size={18} />
-                <input
-                  type="text"
-                  placeholder="Search sports, venues or usernames in Hyderabad..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="explore-search-input"
-                />
-              </div>
-
-              {/* Nearby Events Section */}
-              <section className="explore-events-section">
-                <div className="section-header-row">
-                  <h3>Nearby Events</h3>
-                  <p>Matches and tournaments in your immediate neighborhood</p>
-                </div>
-                <div className="events-grid-layout" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))' }}>
-                  <EventCard
-                    title="Sunday Football Match"
-                    category="Football"
-                    date="Sun, June 7"
-                    time="5:00 PM"
-                    location="Madhapur Turf, Hyderabad"
-                    attendees={12}
-                    image="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=400&h=250&q=80"
-                    onRSVP={() => handleRSVP("Sunday Football Match")}
-                    fullWidth
-                  />
-                  <EventCard
-                    title="Cricket Premier Tournament"
-                    category="Cricket"
-                    date="Fri, June 12"
-                    time="9:00 AM"
-                    location="State Ground, Secunderabad"
-                    attendees={22}
-                    image="https://images.unsplash.com/photo-1531415080290-bc98545ab3ef?auto=format&fit=crop&w=400&h=250&q=80"
-                    onRSVP={() => handleRSVP("Cricket Premier Tournament")}
-                    fullWidth
-                  />
-                </div>
-              </section>
-
-              {/* Active Matchmaking Connections */}
-              <section className="explore-connections-section">
-                <div className="section-header-row">
-                  <h3>Nearby Players</h3>
-                  <p>Active players matching your interest tags</p>
-                </div>
-                <div className="players-grid-layout">
-                  <PlayerCard
-                    name="Rahul Sharma"
-                    distance="1.2 km away"
-                    sports={['Cricket', 'Football']}
-                    skillLevel="Intermediate"
-                    isOnline={true}
-                    avatar="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=150&h=150&q=80"
-                  />
-                  <PlayerCard
-                    name="Neha Reddy"
-                    distance="2.5 km away"
-                    sports={['Tennis', 'Badminton']}
-                    skillLevel="Advanced"
-                    isOnline={true}
-                    avatar="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80"
-                  />
-                  <PlayerCard
-                    name="Aisha Khan"
-                    distance="3.1 km away"
-                    sports={['Yoga', 'Running']}
-                    skillLevel="Pro"
-                    isOnline={false}
-                    avatar="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&h=150&q=80"
-                  />
-                  <PlayerCard
-                    name="Vikram Malhotra"
-                    distance="5.0 km away"
-                    sports={['Football', 'Basketball']}
-                    skillLevel="Pro"
-                    isOnline={true}
-                    avatar="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&h=150&q=80"
-                  />
-                </div>
-              </section>
-            </div>
-          )}
+          {activeTab === 'explore' && <ExplorePage />}
 
           {/* HOME PAGE (EVENT FEED) */}
           {activeTab === 'home' && (
