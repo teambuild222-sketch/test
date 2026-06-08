@@ -1,0 +1,121 @@
+/* ====================================================
+   Navbar.css – Fixed Bottom Navigation Bar
+   ZENEX Mobile App
+   ==================================================== */
+
+.bottom-navbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #FFFFFF;
+  border-top: 1px solid #E5E5E7;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
+  z-index: 100;
+  padding-bottom: calc(env(safe-area-inset-bottom, 14px) + 10px);
+  padding-top: 10px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+[data-theme="dark"] .bottom-navbar {
+  background: #111111;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.navbar-content {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  width: 100%;
+  max-width: 720px;
+  gap: 0;
+  padding: 0 12px;
+  box-sizing: border-box;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #6E6E73;
+  opacity: 1;
+  cursor: pointer;
+  padding: 10px 0 6px;
+  transition: color 180ms ease, transform 180ms ease, opacity 180ms ease;
+  position: relative;
+  box-sizing: border-box;
+}
+
+[data-theme="dark"] .nav-item {
+  color: #A1A1A6;
+}
+
+.nav-item:hover {
+  opacity: 0.9;
+}
+
+.nav-item:active {
+  transform: scale(0.96);
+}
+
+.icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.nav-icon {
+  transition: transform 180ms ease, stroke 180ms ease;
+  stroke-width: 2px;
+}
+
+.nav-item.active {
+  color: #0071E3;
+}
+
+[data-theme="dark"] .nav-item.active {
+  color: #FFFFFF;
+}
+
+.nav-item.active .nav-icon {
+  transform: translateY(-2px);
+}
+
+[data-theme="dark"] .nav-item.active .nav-icon {
+  filter: none;
+}
+
+.active-dot {
+  position: absolute;
+  bottom: -8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+  animation: scaleIn 0.2s ease-out forwards;
+}
+
+.nav-label {
+  font-size: var(--font-xs);
+  font-weight: var(--font-weight-medium);
+  transition: color var(--transition-fast), font-weight var(--transition-fast);
+}
+
+.nav-item.active .nav-label {
+  color: inherit;
+  font-weight: var(--font-weight-semibold);
+}
+
+@media (min-width: 768px) {
+  .bottom-navbar {
+    display: none;
+  }
+}

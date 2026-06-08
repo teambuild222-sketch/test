@@ -1,0 +1,1329 @@
+/* ==========================================================================
+   ZENEX Premium Apple iOS Explore Page Stylesheet
+   ========================================================================== */
+
+/* Global Variable overrides to enforce Apple UI specifications across the shell */
+:root {
+  --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", Arial, sans-serif !important;
+}
+
+/* ---------- Apple Light Mode (Default) ---------- */
+[data-theme="light"] {
+  --bg-primary: #F5F5F7 !important;
+  --bg-secondary: #FFFFFF !important;
+  --bg-card: #FFFFFF !important;
+  --text-primary: #1D1D1F !important;
+  --text-secondary: #6E6E73 !important;
+  --text-tertiary: #6E6E73 !important;
+  --border-color: #D2D2D7 !important;
+  --border-glass: #D2D2D7 !important;
+  --divider-color: #D2D2D7 !important;
+  --accent-primary: #0071E3 !important;
+  --btn-bg: #000000 !important; /* FAB in Light Mode: black background */
+  --btn-text: #FFFFFF !important; /* FAB in Light Mode: white text */
+  --explore-glass-bg: rgba(255, 255, 255, 0.85) !important;
+  --explore-border: #D2D2D7 !important;
+  --explore-accent: #0071E3 !important;
+  --explore-text: #1D1D1F !important;
+  --explore-card: #FFFFFF !important;
+  --explore-text-muted: #6E6E73 !important;
+  --explore-badge: rgba(0, 113, 227, 0.1) !important;
+}
+
+/* ---------- Apple Dark Mode ---------- */
+[data-theme="dark"] {
+  --bg-primary: #000000 !important; /* Entire application background becomes black */
+  --bg-secondary: #111111 !important;
+  --bg-card: #111111 !important;
+  --text-primary: #FFFFFF !important; /* All text becomes white */
+  --text-secondary: #A1A1A6 !important; /* Or light gray */
+  --text-tertiary: #A1A1A6 !important;
+  --border-color: rgba(255, 255, 255, 0.08) !important; /* Borders conform to Apple Dark */
+  --border-glass: rgba(255, 255, 255, 0.08) !important;
+  --divider-color: rgba(255, 255, 255, 0.08) !important;
+  --accent-primary: #0A84FF !important;
+  --btn-bg: #E9DCBE !important; /* FAB in Dark Mode: E9DCBE background */
+  --btn-text: #000000 !important; /* FAB in Dark Mode: black text */
+  --explore-glass-bg: rgba(17, 17, 17, 0.85) !important;
+  --explore-border: rgba(255, 255, 255, 0.08) !important;
+  --explore-accent: #0A84FF !important;
+  --explore-text: #FFFFFF !important;
+  --explore-card: #111111 !important;
+  --explore-text-muted: #A1A1A6 !important;
+  --explore-badge: rgba(10, 132, 255, 0.1) !important;
+}
+
+/* Make entire application background match our settings */
+body {
+  background-color: var(--bg-primary) !important;
+  font-family: var(--font-family) !important;
+}
+
+/* Force Layout grid and shell structure to support full height when explore is active */
+.explore-active {
+  background: var(--bg-primary) !important;
+}
+
+.explore-layout-grid {
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: 100% !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  gap: 0 !important;
+  position: relative !important;
+  display: block !important;
+}
+
+.explore-layout-grid .zenex-main-panel {
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Left Sidebar Floats on Top of Map */
+.explore-sidebar-floating {
+  position: absolute !important;
+  top: 24px !important;
+  left: 24px !important;
+  bottom: 24px !important;
+  z-index: 100 !important;
+  background: var(--explore-glass-bg) !important;
+  backdrop-filter: blur(20px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+  border-radius: 20px !important;
+  border: 1px solid var(--explore-border) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+  height: calc(100% - 48px) !important;
+  width: 200px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.explore-sidebar-floating .zenex-sidebar-inner {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 16px 12px !important;
+  height: 100% !important;
+}
+
+/* Fullscreen Map-First Container */
+.explore-container-fullscreen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--explore-bg);
+}
+
+/* Map Hero stretches edge-to-edge */
+.map-view-hero {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Dark mode – invert OSM so white/light map areas turn dark */
+[data-theme="dark"] .map-view-hero .leaflet-tile-pane {
+  filter: invert(100%) hue-rotate(180deg) brightness(0.92) contrast(0.96);
+}
+
+[data-theme="dark"] .explore-container-fullscreen {
+  background-color: #1a1a1a;
+}
+
+.map-view-hero .leaflet-tile {
+  image-rendering: auto;
+}
+
+/* --- Floating Overlays --- */
+
+:root {
+  --explore-pill-width: 42px;
+  --explore-pill-inset: 14px;
+  --explore-ui-gap: 18px;
+  --explore-dropdown-font: 'Clash Display', sans-serif;
+}
+
+/* TOP-LEFT FILTER BAR */
+.explore-filter-bar {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  right: calc(var(--explore-pill-width) + var(--explore-pill-inset) + var(--explore-ui-gap));
+  z-index: 1000;
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
+.explore-filter-main {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 5px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  background: var(--explore-glass-bg);
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+  border: 1px solid var(--explore-border);
+  border-radius: 14px;
+  padding: 5px 7px 6px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.explore-filter-row--top {
+  display: flex;
+  align-items: center;
+}
+
+.explore-filter-dropdown-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.explore-filter-dropdown-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 9px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--explore-text);
+  font-family: var(--explore-dropdown-font);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+.explore-filter-dropdown-btn:hover {
+  background: var(--explore-border);
+}
+
+.explore-filter-chevron {
+  opacity: 0.7;
+  transition: transform 0.2s ease;
+}
+
+.explore-filter-chevron.open {
+  transform: rotate(180deg);
+}
+
+.explore-filter-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 132px;
+  padding: 4px;
+  background: var(--explore-card);
+  border: 1px solid var(--explore-border);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  z-index: 1100;
+}
+
+.explore-filter-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 7px 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--explore-text);
+  font-family: var(--explore-dropdown-font);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.explore-filter-dropdown-item:hover {
+  background: var(--explore-border);
+}
+
+.explore-filter-dropdown-item.active {
+  font-weight: 700;
+}
+
+.explore-filter-bar--sports .explore-filter-dropdown-item.active {
+  color: #1a1a1a;
+  background: #ffffff;
+}
+
+.explore-filter-bar--entertainment .explore-filter-dropdown-item.active {
+  color: #ffffff;
+  background: #111111;
+}
+
+.explore-filter-row--chips {
+  width: 100%;
+}
+
+.explore-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+/* Strava-style solid pill buttons */
+.explore-filter-chip {
+  flex-shrink: 0;
+  height: 28px;
+  padding: 0 13px;
+  border: 1px solid var(--explore-border);
+  border-radius: 999px;
+  background: var(--explore-card);
+  color: var(--explore-text);
+  font-family: var(--font-family);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+  line-height: 1;
+}
+
+.explore-filter-chip:hover {
+  border-color: var(--explore-text-muted);
+}
+
+.explore-filter-chip:active {
+  transform: scale(0.95);
+}
+
+/* Sports – white active button */
+.explore-filter-bar--sports .explore-filter-chip.active {
+  background: #ffffff;
+  color: #111111;
+  border-color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+.explore-filter-bar--sports .explore-filter-dropdown-btn {
+  color: #1a1a1a;
+}
+
+[data-theme="dark"] .explore-filter-bar--sports .explore-filter-dropdown-btn {
+  color: var(--explore-text);
+}
+
+/* Entertainment – black active button */
+.explore-filter-bar--entertainment .explore-filter-chip.active {
+  background: #111111;
+  color: #ffffff;
+  border-color: #111111;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+}
+
+[data-theme="dark"] .explore-filter-bar--entertainment .explore-filter-chip.active {
+  background: #f5f5f5;
+  color: #111111;
+  border-color: #f5f5f5;
+}
+
+@media (max-width: 480px) {
+  :root {
+    --explore-pill-inset: 10px;
+    --explore-ui-gap: 14px;
+  }
+
+  .explore-filter-bar {
+    top: 10px;
+    left: 10px;
+  }
+
+  .explore-filter-chip {
+    font-size: 10px;
+    padding: 0 11px;
+    height: 26px;
+  }
+}
+
+/* FLOATING VERTICAL CONTROL BAR */
+.vertical-control-pill {
+  position: fixed;
+  top: 12px;
+  right: var(--explore-pill-inset);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--explore-glass-bg);
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+  border: 1px solid var(--explore-border);
+  border-radius: 20px;
+  padding: 5px 4px;
+  gap: 4px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  pointer-events: auto;
+  width: 42px;
+  min-width: 42px;
+}
+
+@media (max-width: 480px) {
+  .vertical-control-pill {
+    right: var(--explore-pill-inset);
+    top: 10px;
+  }
+}
+
+.ios-top-left-card {
+  display: none;
+}
+
+.active-filter-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--explore-accent);
+  color: #FFFFFF;
+  font-size: 9px;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 999px;
+  margin-top: 4px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: opacity 0.2s ease;
+}
+
+.active-filter-badge:hover {
+  opacity: 0.85;
+}
+
+.control-pill-btn {
+  background: transparent;
+  border: none;
+  color: var(--explore-text);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  position: relative;
+}
+
+.control-pill-btn:hover {
+  background: var(--explore-border);
+  transform: scale(1.05);
+}
+
+.control-pill-btn.active {
+  background: var(--explore-accent);
+  color: #FFFFFF !important;
+}
+
+.notif-pill-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #FF3B30;
+  border: 1.5px solid var(--explore-card);
+}
+
+/* Floating iOS Zoom controls */
+.ios-zoom-controls {
+  position: absolute;
+  bottom: 96px;
+  right: 24px;
+  z-index: 99;
+  display: flex;
+  flex-direction: column;
+  background: var(--explore-glass-bg);
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+  border: 1px solid var(--explore-border);
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.ios-zoom-controls button {
+  width: 38px;
+  height: 38px;
+  background: transparent;
+  border: none;
+  color: var(--explore-text);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.ios-zoom-controls button:first-child {
+  border-bottom: 1px solid var(--explore-border);
+}
+
+.ios-zoom-controls button:hover {
+  background: var(--explore-border);
+}
+
+/* CREATE EVENT FAB - Apple Inspired Styles */
+.fab-create-event-overlay.ios-style {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--btn-bg) !important;
+  color: var(--btn-text) !important;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+  pointer-events: auto;
+  letter-spacing: -0.2px;
+}
+
+.fab-create-event-overlay.ios-style:hover {
+  transform: scale(1.03) translateY(-1px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.fab-create-event-overlay.ios-style:active {
+  transform: scale(0.98);
+}
+
+/* --- Expandable Premium Search Panel Overlay (iOS glass panel) --- */
+.search-panel-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 999;
+}
+
+.search-panel-container.ios-style {
+  position: absolute;
+  z-index: 1000;
+  background: var(--explore-glass-bg);
+  backdrop-filter: blur(30px) saturate(190%);
+  -webkit-backdrop-filter: blur(30px) saturate(190%);
+  border: 1px solid var(--explore-border);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+/* Desktop Search alignment */
+@media (min-width: 769px) {
+  .search-panel-container.ios-style {
+    right: 80px; /* Aligns below vertical pill controls */
+    top: 24px;
+    width: 420px;
+    max-height: calc(100% - 48px);
+  }
+}
+
+/* Mobile Search alignment */
+@media (max-width: 768px) {
+  .search-panel-container.ios-style {
+    left: 5%;
+    right: 5%;
+    width: 90%;
+    top: 80px;
+    max-height: 70vh;
+  }
+}
+
+.search-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid var(--explore-border);
+}
+
+.search-input-box {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-box-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--explore-text-muted);
+  pointer-events: none;
+}
+
+.search-input-box input {
+  width: 100%;
+  padding: 10px 36px 10px 36px;
+  background: var(--bg-primary);
+  border: 1px solid var(--explore-border);
+  border-radius: 12px;
+  color: var(--explore-text);
+  font-family: var(--font-family);
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.search-input-box input:focus {
+  outline: none;
+  border-color: var(--explore-accent);
+  background: var(--bg-secondary);
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--explore-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-search-panel-btn {
+  background: var(--explore-border);
+  border: none;
+  color: var(--explore-text);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.close-search-panel-btn:hover {
+  background: rgba(142, 142, 147, 0.25);
+}
+
+.search-panel-body {
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.search-panel-section h4 {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--explore-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin: 0 0 10px 0;
+}
+
+.section-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.clear-all-btn {
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--explore-accent);
+  cursor: pointer;
+}
+
+/* Quick Categories Grid */
+.quick-filters-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.quick-filter-tag {
+  background: var(--bg-secondary);
+  border: 1px solid var(--explore-border);
+  color: var(--explore-text);
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quick-filter-tag:hover {
+  background: var(--explore-accent);
+  color: #FFFFFF;
+  border-color: var(--explore-accent);
+}
+
+/* Recent list */
+.recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.recent-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.recent-item:hover {
+  background: var(--bg-secondary);
+}
+
+.recent-icon {
+  color: var(--explore-text-muted);
+}
+
+.recent-text {
+  font-size: 13px;
+  color: var(--explore-text);
+}
+
+/* Trending suggestions list */
+.trending-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.trending-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--explore-border);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.trending-item:hover {
+  border-color: var(--explore-accent);
+  transform: translateY(-1px);
+}
+
+.trending-icon {
+  font-size: 16px;
+}
+
+.trending-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.trending-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--explore-text);
+}
+
+.trending-venue {
+  font-size: 11px;
+  color: var(--explore-text-muted);
+  margin-top: 1px;
+}
+
+/* --- iOS-STYLE SLIDING NOTIFICATIONS / SETTINGS PANELS --- */
+.ios-panel-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1999;
+  background: rgba(0,0,0,0.15);
+  backdrop-filter: blur(2px);
+}
+
+.ios-panel-container {
+  position: absolute;
+  top: 24px;
+  bottom: 24px;
+  width: 360px;
+  height: calc(100% - 48px);
+  background: var(--explore-glass-bg);
+  backdrop-filter: blur(30px) saturate(190%);
+  -webkit-backdrop-filter: blur(30px) saturate(190%);
+  border: 1px solid var(--explore-border);
+  border-radius: 24px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+/* Align on the right side of screen next to vertical control pill */
+@media (min-width: 769px) {
+  .ios-panel-container {
+    right: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ios-panel-container {
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
+}
+
+.ios-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--explore-border);
+}
+
+.ios-panel-header h3 {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--explore-text);
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.ios-panel-close-btn {
+  background: var(--explore-border);
+  border: none;
+  color: var(--explore-text);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.ios-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Notifications inside panel */
+.ios-notif-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary);
+  border: 1px solid var(--explore-border);
+  border-radius: 16px;
+  padding: 14px;
+  gap: 6px;
+  box-shadow: var(--shadow-sm);
+}
+
+.ios-notif-badge {
+  font-size: 9px;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+  align-self: flex-start;
+}
+
+.ios-notif-badge.sports {
+  background: rgba(0, 113, 227, 0.1);
+  color: var(--explore-accent);
+}
+
+.ios-notif-badge.entertainment {
+  background: rgba(255, 45, 85, 0.1);
+  color: #FF2D55;
+}
+
+.ios-notif-card h4 {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--explore-text);
+}
+
+.ios-notif-card p {
+  font-size: 12px;
+  color: var(--explore-text-muted);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.ios-notif-time {
+  font-size: 10px;
+  color: var(--explore-text-muted);
+}
+
+/* Settings elements inside panel */
+.ios-settings-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ios-settings-group h4 {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--explore-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin: 0 0 8px 4px;
+}
+
+.ios-setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--explore-border);
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--explore-text);
+  margin-bottom: 6px;
+}
+
+.ios-settings-action-btn,
+.ios-settings-secondary-btn,
+.ios-settings-logout-btn {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--explore-border);
+  background: var(--bg-secondary);
+  color: var(--explore-text);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  margin-top: 8px;
+}
+
+.ios-settings-action-btn:hover,
+.ios-settings-secondary-btn:hover,
+.ios-settings-logout-btn:hover {
+  background: var(--explore-border);
+}
+
+.ios-settings-logout-btn {
+  color: #FF3B30;
+  border-color: rgba(255, 59, 48, 0.25);
+}
+
+.ios-value-text {
+  font-size: 12px;
+  color: var(--explore-text-muted);
+  font-weight: 600;
+}
+
+/* Native iOS-Style Switch Toggle Slider */
+.ios-switch {
+  position: relative;
+  display: inline-block;
+  width: 51px;
+  height: 31px;
+}
+
+.ios-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ios-switch-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: var(--explore-border);
+  border-radius: 34px;
+  transition: .25s ease-in-out;
+}
+
+.ios-switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 27px;
+  width: 27px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: .25s ease-in-out;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+.ios-switch input:checked + .ios-switch-slider {
+  background-color: #34C759; /* iOS green switch color */
+}
+
+.ios-switch input:checked + .ios-switch-slider:before {
+  transform: translateX(20px);
+}
+
+/* --- iOS-STYLE SLIDE-UP BOTTOM SHEET (Create Event Modal) --- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 10000;
+  display: flex;
+  align-items: flex-end; /* Align at bottom of screen */
+  justify-content: center;
+}
+
+.modal-content-card.ios-bottom-sheet {
+  width: 100%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-glass);
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  overflow: hidden;
+  border-radius: 20px 20px 0 0 !important;
+  position: relative;
+}
+
+/* Notch handle at top of iOS sheet */
+.ios-sheet-handle {
+  width: 36px;
+  height: 5px;
+  background: var(--text-secondary);
+  opacity: 0.3;
+  border-radius: 3px;
+  margin: 10px auto 4px auto;
+  flex-shrink: 0;
+}
+
+/* Align modal layout widths */
+@media (min-width: 769px) {
+  .modal-content-card.ios-bottom-sheet {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
+
+.modal-header {
+  border-bottom: 1px solid var(--divider-color);
+  padding: 12px 20px !important;
+}
+
+.modal-header h3 {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+/* Flat Apple-style inputs */
+.form-group input[type="text"],
+.form-group select,
+.form-group textarea,
+.form-group input[type="date"],
+.form-group input[type="time"] {
+  background: var(--bg-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  padding: 11px 14px !important;
+  font-size: 13px !important;
+  transition: all 0.2s ease !important;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--accent-primary) !important;
+  background: var(--bg-secondary) !important;
+}
+
+/* Category group toggles */
+.category-toggle-group {
+  background: var(--bg-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 10px !important;
+}
+
+.category-toggle-btn.active {
+  background: var(--bg-secondary) !important;
+  box-shadow: var(--shadow-sm) !important;
+  font-weight: 700 !important;
+}
+
+/* Form layouts */
+.modal-form-scroll-container {
+  padding: 20px !important;
+  gap: 14px !important;
+}
+
+.modal-footer {
+  border-top: 1px solid var(--divider-color);
+  padding: 16px 20px !important;
+  background: var(--bg-secondary);
+}
+
+.btn-cancel {
+  border-radius: 12px !important;
+  padding: 12px 24px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+.btn-submit {
+  background: var(--accent-primary) !important;
+  color: #FFFFFF !important;
+  border-radius: 12px !important;
+  padding: 12px 24px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+
+/* Map Popups Apple Style Card styling */
+.map-popup-card.ios-style {
+  background: var(--explore-card);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.map-popup-card.ios-style .map-popup-title {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  margin: 0;
+}
+
+.map-popup-head {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.map-popup-card.ios-style .map-popup-tag {
+  color: var(--explore-accent);
+  background: var(--explore-badge);
+  padding: 2px 8px;
+  border-radius: 4px;
+  align-self: flex-start;
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.map-popup-organizer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: opacity 0.2s ease;
+}
+
+.map-popup-organizer:hover {
+  opacity: 0.8;
+}
+
+.map-popup-organizer-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.map-popup-organizer-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--explore-text, #f5f5f7);
+}
+
+.map-popup-organizer-username {
+  font-size: 11px;
+  color: var(--explore-accent, #0071e3);
+  font-weight: 600;
+}
+
+.map-popup-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.map-popup-card.ios-style .map-popup-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--explore-text-muted);
+  font-size: 11px;
+}
+
+.map-popup-description {
+  margin: 2px 0 0;
+  font-size: 10px;
+  line-height: 1.45;
+  color: var(--explore-text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.map-popup-card.ios-style .map-popup-actions {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.map-popup-card.ios-style .map-popup-btn {
+  border-radius: 10px;
+  padding: 8px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  border: none;
+}
+
+.map-popup-card.ios-style .map-popup-btn.join-btn {
+  background: var(--explore-accent);
+  color: #ffffff;
+}
+
+.map-popup-card.ios-style .map-popup-btn.location-btn {
+  background: var(--explore-border);
+  color: var(--explore-text);
+}
+
+/* Custom Marker Pin layout overrides – legacy, replaced by eventMapIcons.css */
+
+.leaflet-popup-content-wrapper {
+  background: var(--explore-card) !important;
+  border: 1px solid var(--explore-border) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+}
+
+.leaflet-popup-content {
+  margin: 10px 12px !important;
+  line-height: 1.3;
+}
+
+.leaflet-popup-tip {
+  background: var(--explore-card) !important;
+  border-color: var(--explore-border) !important;
+}
+
+/* --- iOS Transitions and Animations --- */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slideInRight {
+  animation: slideInRight 280ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slideUp {
+  animation: slideUp 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideDown {
+  animation: slideDown 260ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
