@@ -59,6 +59,7 @@ export const Layout: React.FC = () => {
   // Membership states
   const [membershipPlan, setMembershipPlan] = useState<PlanType>(getSavedPlan);
   const [isMembershipOpen, setIsMembershipOpen] = useState(false);
+  const [isMembershipCardVisible, setIsMembershipCardVisible] = useState(true);
   const [fullName, setFullName] = useState(() => localStorage.getItem('zenex-fullname') || 'Katakam Ritvik');
   const [avatar, setAvatar] = useState(() => localStorage.getItem('zenex-avatar') || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&h=300&q=80');
 
@@ -684,193 +685,205 @@ export const Layout: React.FC = () => {
         </main>
 
         {/* Right Panel (Visible on Desktop >1024px) */}
-        <aside className="zenex-right-panel">
-          
-          {/* Membership Desktop Card */}
-          <div className="glass-card right-panel-card membership-desktop-card">
-            <div className="desktop-card-profile">
-              <img src={avatar} alt={fullName} className="desktop-card-avatar" />
-              <div className="desktop-card-info">
-                <span className="desktop-card-name">{fullName}</span>
-                <div className="desktop-card-plan-row">
-                  <span className="desktop-card-plan-label">Current Plan:</span>
-                  <span className={`plan-badge-pill badge-${membershipPlan.toLowerCase()}`}>{membershipPlan}</span>
+        {activeTab !== 'chat' && (
+          <aside className="zenex-right-panel">
+            
+            {/* Membership Desktop Card */}
+            {isMembershipCardVisible && (
+              <div className="glass-card right-panel-card membership-desktop-card">
+                <button
+                  type="button"
+                  className="membership-card-close-btn"
+                  onClick={() => setIsMembershipCardVisible(false)}
+                  aria-label="Close plan manager"
+                >
+                  <X size={16} />
+                </button>
+                <div className="desktop-card-profile">
+                  <img src={avatar} alt={fullName} className="desktop-card-avatar" />
+                  <div className="desktop-card-info">
+                    <span className="desktop-card-name">{fullName}</span>
+                    <div className="desktop-card-plan-row">
+                      <span className="desktop-card-plan-label">Current Plan:</span>
+                      <span className={`plan-badge-pill badge-${membershipPlan.toLowerCase()}`}>{membershipPlan}</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            {membershipPlan === 'FREE' && (
-              <div className="desktop-quick-upgrades">
-                <div className="quick-upgrade-item">
-                  <span>Upgrade to <strong>PLUS</strong></span>
-                  <span>₹699/mo</span>
-                </div>
-                <div className="quick-upgrade-item">
-                  <span>Upgrade to <strong>PRO</strong></span>
-                  <span>₹999/mo</span>
-                </div>
+                {membershipPlan === 'FREE' && (
+                  <div className="desktop-quick-upgrades">
+                    <div className="quick-upgrade-item">
+                      <span>Upgrade to <strong>PLUS</strong></span>
+                      <span>₹699/mo</span>
+                    </div>
+                    <div className="quick-upgrade-item">
+                      <span>Upgrade to <strong>PRO</strong></span>
+                      <span>₹999/mo</span>
+                    </div>
+                  </div>
+                )}
+
+                {membershipPlan === 'PLUS' && (
+                  <div className="desktop-quick-upgrades">
+                    <div className="quick-upgrade-item">
+                      <span>Upgrade to <strong>PRO</strong></span>
+                      <span>₹999/mo</span>
+                    </div>
+                  </div>
+                )}
+
+                <button 
+                  type="button" 
+                  className="desktop-upgrade-now-btn"
+                  onClick={() => setIsMembershipOpen(true)}
+                >
+                  <Sparkles size={14} />
+                  <span>{membershipPlan === 'PRO' ? 'Manage Plan' : 'Upgrade Now'}</span>
+                </button>
               </div>
             )}
 
-            {membershipPlan === 'PLUS' && (
-              <div className="desktop-quick-upgrades">
-                <div className="quick-upgrade-item">
-                  <span>Upgrade to <strong>PRO</strong></span>
-                  <span>₹999/mo</span>
-                </div>
+            {/* Notifications Card */}
+            <div className="glass-card right-panel-card">
+              <div className="panel-heading">
+                <h3>Notifications</h3>
+                <span className="unread-badge">3 unread</span>
               </div>
-            )}
-
-            <button 
-              type="button" 
-              className="desktop-upgrade-now-btn"
-              onClick={() => setIsMembershipOpen(true)}
-            >
-              <Sparkles size={14} />
-              <span>{membershipPlan === 'PRO' ? 'Manage Plan' : 'Upgrade Now'}</span>
-            </button>
-          </div>
-
-          {/* Notifications Card */}
-          <div className="glass-card right-panel-card">
-            <div className="panel-heading">
-              <h3>Notifications</h3>
-              <span className="unread-badge">3 unread</span>
-            </div>
-            <div className="panel-notifications-list">
-              <div className="panel-notif-item unread">
-                <div className="panel-notif-dot" />
-                <div className="panel-notif-info">
-                  <span className="panel-notif-text"><strong>Rahul Sharma</strong> sent you a connection request.</span>
-                  <span className="panel-notif-time">2h ago</span>
+              <div className="panel-notifications-list">
+                <div className="panel-notif-item unread">
+                  <div className="panel-notif-dot" />
+                  <div className="panel-notif-info">
+                    <span className="panel-notif-text"><strong>Rahul Sharma</strong> sent you a connection request.</span>
+                    <span className="panel-notif-time">2h ago</span>
+                  </div>
                 </div>
-              </div>
-              <div className="panel-notif-item">
-                <div className="panel-notif-info">
-                  <span className="panel-notif-text">Cricket Match near <strong>Madhapur</strong> starts tomorrow.</span>
-                  <span className="panel-notif-time">1d ago</span>
+                <div className="panel-notif-item">
+                  <div className="panel-notif-info">
+                    <span className="panel-notif-text">Cricket Match near <strong>Madhapur</strong> starts tomorrow.</span>
+                    <span className="panel-notif-time">1d ago</span>
+                  </div>
                 </div>
-              </div>
-              <div className="panel-notif-item">
-                <div className="panel-notif-info">
-                  <span className="panel-notif-text">Your badge <strong>Event Organizer</strong> has been unlocked!</span>
-                  <span className="panel-notif-time">3d ago</span>
+                <div className="panel-notif-item">
+                  <div className="panel-notif-info">
+                    <span className="panel-notif-text">Your badge <strong>Event Organizer</strong> has been unlocked!</span>
+                    <span className="panel-notif-time">3d ago</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Suggested Connections */}
-          <div className="glass-card right-panel-card">
-            <div className="panel-heading">
-              <h3>Suggested Connections</h3>
-              <span>3 new</span>
-            </div>
-            <ul className="panel-list">
-              <li>
-                <div className="panel-item-left">
-                  <strong>Rahul Sharma</strong>
-                  <span>Cricket Captain</span>
-                </div>
-                <button className="panel-item-action-btn">Connect</button>
-              </li>
-              <li>
-                <div className="panel-item-left">
-                  <strong>Neha Reddy</strong>
-                  <span>Event Host</span>
-                </div>
-                <button className="panel-item-action-btn">Connect</button>
-              </li>
-              <li>
-                <div className="panel-item-left">
-                  <strong>Aisha Khan</strong>
-                  <span>Fitness Trainer</span>
-                </div>
-                <button className="panel-item-action-btn">Connect</button>
-              </li>
-            </ul>
-          </div>
-
-          {/* Trending Events */}
-          <div className="glass-card right-panel-card">
-            <div className="panel-heading">
-              <h3>Trending Events</h3>
-              <span>Today</span>
-            </div>
-            <ul className="panel-list">
-              <li>
-                <div className="panel-item-left">
-                  <strong>Sunday Football</strong>
-                  <span>5 spots left</span>
-                </div>
-                <button className="panel-item-action-btn action-rsvp" onClick={() => handleRSVP("Sunday Football")}>RSVP</button>
-              </li>
-              <li>
-                <div className="panel-item-left">
-                  <strong>Live DJ Night</strong>
-                  <span>Madhapur</span>
-                </div>
-                <button className="panel-item-action-btn action-rsvp" onClick={() => handleRSVP("Live DJ Night")}>RSVP</button>
-              </li>
-              <li>
-                <div className="panel-item-left">
-                  <strong>Open Mic</strong>
-                  <span>Free entry</span>
-                </div>
-                <button className="panel-item-action-btn action-rsvp" onClick={() => handleRSVP("Open Mic")}>RSVP</button>
-              </li>
-            </ul>
-          </div>
-
-          {/* Rewards Summary */}
-          <div className="glass-card right-panel-card rewards-card">
-            <div className="panel-heading">
-              <h3>Rewards Summary</h3>
-              <span className="rewards-badge">XP Level 8</span>
-            </div>
-            <p><strong>12 Badges Earned</strong></p>
-            <p className="rewards-sub">2 challenges unlocked in Hyderabad.</p>
-            <div className="progress-bar" style={{ marginTop: 12 }}>
-              <div className="progress-bar-fill" style={{ width: '65%' }}></div>
-            </div>
-            <div className="progress-bar-labels">
-              <span>850 XP</span>
-              <span>1200 XP to Level 9</span>
-            </div>
-          </div>
-
-          {/* Online Users */}
-          <div className="glass-card right-panel-card online-users-card">
-            <div className="panel-heading">
-              <h3>Online Users</h3>
-              <span className="online-users-count">3 Online</span>
-            </div>
-            <div className="panel-online-users-list">
-              <div className="online-user-item">
-                <div className="online-avatar-wrap">
-                  <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=150&h=150&q=80" alt="Rahul Sharma" className="online-avatar" />
-                  <span className="online-dot-indicator" />
-                </div>
-                <span className="online-name">Rahul Sharma</span>
+            {/* Suggested Connections */}
+            <div className="glass-card right-panel-card">
+              <div className="panel-heading">
+                <h3>Suggested Connections</h3>
+                <span>3 new</span>
               </div>
-              <div className="online-user-item">
-                <div className="online-avatar-wrap">
-                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80" alt="Neha Reddy" className="online-avatar" />
-                  <span className="online-dot-indicator" />
-                </div>
-                <span className="online-name">Neha Reddy</span>
+              <ul className="panel-list">
+                <li>
+                  <div className="panel-item-left">
+                    <strong>Rahul Sharma</strong>
+                    <span>Cricket Captain</span>
+                  </div>
+                  <button className="panel-item-action-btn">Connect</button>
+                </li>
+                <li>
+                  <div className="panel-item-left">
+                    <strong>Neha Reddy</strong>
+                    <span>Event Host</span>
+                  </div>
+                  <button className="panel-item-action-btn">Connect</button>
+                </li>
+                <li>
+                  <div className="panel-item-left">
+                    <strong>Aisha Khan</strong>
+                    <span>Fitness Trainer</span>
+                  </div>
+                  <button className="panel-item-action-btn">Connect</button>
+                </li>
+              </ul>
+            </div>
+
+            {/* Trending Events */}
+            <div className="glass-card right-panel-card">
+              <div className="panel-heading">
+                <h3>Trending Events</h3>
+                <span>Today</span>
               </div>
-              <div className="online-user-item">
-                <div className="online-avatar-wrap">
-                  <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&h=150&q=80" alt="Vikram Malhotra" className="online-avatar" />
-                  <span className="online-dot-indicator" />
-                </div>
-                <span className="online-name">Vikram Malhotra</span>
+              <ul className="panel-list">
+                <li>
+                  <div className="panel-item-left">
+                    <strong>Sunday Football</strong>
+                    <span>5 spots left</span>
+                  </div>
+                  <button className="panel-item-action-btn action-rsvp" onClick={() => handleRSVP("Sunday Football")}>RSVP</button>
+                </li>
+                <li>
+                  <div className="panel-item-left">
+                    <strong>Live DJ Night</strong>
+                    <span>Madhapur</span>
+                  </div>
+                  <button className="panel-item-action-btn action-rsvp" onClick={() => handleRSVP("Live DJ Night")}>RSVP</button>
+                </li>
+                <li>
+                  <div className="panel-item-left">
+                    <strong>Open Mic</strong>
+                    <span>Free entry</span>
+                  </div>
+                  <button className="panel-item-action-btn action-rsvp" onClick={() => handleRSVP("Open Mic")}>RSVP</button>
+                </li>
+              </ul>
+            </div>
+
+            {/* Rewards Summary */}
+            <div className="glass-card right-panel-card rewards-card">
+              <div className="panel-heading">
+                <h3>Rewards Summary</h3>
+                <span className="rewards-badge">XP Level 8</span>
+              </div>
+              <p><strong>12 Badges Earned</strong></p>
+              <p className="rewards-sub">2 challenges unlocked in Hyderabad.</p>
+              <div className="progress-bar" style={{ marginTop: 12 }}>
+                <div className="progress-bar-fill" style={{ width: '65%' }}></div>
+              </div>
+              <div className="progress-bar-labels">
+                <span>850 XP</span>
+                <span>1200 XP to Level 9</span>
               </div>
             </div>
-          </div>
 
-        </aside>
+            {/* Online Users */}
+            <div className="glass-card right-panel-card online-users-card">
+              <div className="panel-heading">
+                <h3>Online Users</h3>
+                <span className="online-users-count">3 Online</span>
+              </div>
+              <div className="panel-online-users-list">
+                <div className="online-user-item">
+                  <div className="online-avatar-wrap">
+                    <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=150&h=150&q=80" alt="Rahul Sharma" className="online-avatar" />
+                    <span className="online-dot-indicator" />
+                  </div>
+                  <span className="online-name">Rahul Sharma</span>
+                </div>
+                <div className="online-user-item">
+                  <div className="online-avatar-wrap">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80" alt="Neha Reddy" className="online-avatar" />
+                    <span className="online-dot-indicator" />
+                  </div>
+                  <span className="online-name">Neha Reddy</span>
+                </div>
+                <div className="online-user-item">
+                  <div className="online-avatar-wrap">
+                    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&h=150&q=80" alt="Vikram Malhotra" className="online-avatar" />
+                    <span className="online-dot-indicator" />
+                  </div>
+                  <span className="online-name">Vikram Malhotra</span>
+                </div>
+              </div>
+            </div>
+
+          </aside>
+        )}
       </div>
 
       {/* Slide-up Notifications Drawer (Used on mobile/tablet) */}

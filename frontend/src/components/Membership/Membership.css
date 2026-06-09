@@ -451,10 +451,33 @@
 
 /* ---------- Desktop Right Panel Membership Card ---------- */
 .membership-desktop-card {
+  position: relative;
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.membership-card-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform var(--transition-fast), background var(--transition-fast);
+}
+
+.membership-card-close-btn:hover {
+  background: var(--bg-tertiary);
+  transform: scale(1.05);
 }
 
 .desktop-card-profile {
