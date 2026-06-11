@@ -28,6 +28,7 @@ import {
 import { MembershipModal, getSavedPlan, PLAN_CHANGE_EVENT, PlanType } from './Membership/Membership';
 import ExplorePage from './ExplorePage/ExplorePage';
 import { EVENT_ORGANIZERS } from './ExplorePage/exploreEvents';
+import ZenexAI from './ZenexAI/ZenexAI';
 import './Layout.css';
 
 interface Message {
@@ -925,6 +926,9 @@ export const Layout: React.FC = () => {
 
       {/* Bottom Navigation Bar (Visible on Mobile <768px) */}
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+
+      {/* Zenex AI chatbot */}
+      <ZenexAI />
 
       {/* Premium Membership Modal */}
       <MembershipModal isOpen={isMembershipOpen} onClose={() => setIsMembershipOpen(false)} />
