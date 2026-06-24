@@ -1,0 +1,365 @@
+/* ============================================
+   EXPLORE PAGE - MOBILE-FIRST INTERACTIVE MAP
+   ============================================ */
+
+.explore-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-primary);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Map Container */
+.explore-map-container {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-secondary);
+}
+
+.explore-map-container .leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+  background: var(--bg-secondary);
+}
+
+.explore-map-container .leaflet-tile-pane {
+  filter: brightness(1.1) contrast(0.95);
+}
+
+[data-theme="dark"] .explore-map-container .leaflet-tile-pane {
+  filter: brightness(0.7) contrast(1.2);
+}
+
+/* Search & Filter Header */
+.explore-header {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 100;
+  animation: slideInDown 0.3s ease;
+}
+
+.explore-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 10px 12px;
+  box-shadow: var(--shadow-lg);
+}
+
+.explore-search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+  font-family: var(--font-family);
+}
+
+.explore-search-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.explore-search-icon,
+.explore-close-icon {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+/* Sports Chips */
+.explore-chips-container {
+  position: absolute;
+  top: 60px;
+  left: 12px;
+  right: 12px;
+  z-index: 100;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  animation: slideInDown 0.4s ease;
+}
+
+.explore-chips-container::-webkit-scrollbar {
+  display: none;
+}
+
+.explore-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.explore-chip:active {
+  transform: scale(0.95);
+}
+
+.explore-chip.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary-dark);
+}
+
+.explore-chip-icon {
+  font-size: 14px;
+}
+
+/* Nearby Events / Floating Card */
+.explore-nearby-container {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 100;
+  animation: slideInUp 0.4s ease;
+}
+
+.explore-nearby-card {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+  max-height: 280px;
+  display: flex;
+  flex-direction: column;
+}
+
+.nearby-card-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nearby-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.nearby-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nearby-events-list {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  max-height: 220px;
+}
+
+.nearby-event-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--glass-border);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.nearby-event-item:last-child {
+  border-bottom: none;
+}
+
+.nearby-event-item:active {
+  background: rgba(124, 58, 237, 0.1);
+}
+
+.nearby-event-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.nearby-event-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.nearby-event-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 2px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nearby-event-distance {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Floating Create Button */
+.explore-create-fab {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 101;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-xl);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideUp 0.5s ease;
+}
+
+.explore-create-fab:active {
+  transform: scale(0.95);
+  box-shadow: var(--shadow-lg);
+}
+
+.explore-create-fab:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-xl);
+}
+
+.explore-create-fab svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2.5;
+}
+
+/* Leaflet Popup Override */
+.leaflet-popup {
+  margin-bottom: 0 !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: var(--glass) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--shadow-lg) !important;
+  color: var(--text-primary) !important;
+}
+
+.leaflet-popup-content {
+  color: var(--text-primary) !important;
+  font-size: 13px !important;
+  font-family: var(--font-family) !important;
+}
+
+.leaflet-popup-close-button {
+  color: var(--text-secondary) !important;
+  opacity: 0.8;
+}
+
+.leaflet-popup-close-button:hover {
+  opacity: 1;
+}
+
+.leaflet-popup-tip {
+  background: var(--glass) !important;
+  border: 1px solid var(--glass-border) !important;
+}
+
+/* Settings Panel */
+.explore-settings-panel {
+  position: absolute;
+  bottom: 100px;
+  right: 12px;
+  z-index: 99;
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: var(--shadow-lg);
+  animation: slideInUp 0.3s ease;
+}
+
+.settings-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+}
+
+.settings-option:active {
+  background: rgba(124, 58, 237, 0.1);
+}
+
+.settings-option input {
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+  .explore-chip {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .nearby-event-item {
+    padding: 14px 18px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .explore-header,
+  .explore-chips-container,
+  .explore-nearby-container,
+  .explore-create-fab,
+  .explore-settings-panel {
+    animation: none;
+  }
+}

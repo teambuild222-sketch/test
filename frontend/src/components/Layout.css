@@ -5,15 +5,20 @@
 
 .zenex-app-shell {
   width: 100%;
+  max-width: 390px;
+  height: 100vh;
+  height: 100dvh;
   min-height: 100vh;
   min-height: 100dvh;
   background: var(--bg-primary);
   color: var(--text-primary);
   overflow-x: hidden;
+  overflow-y: hidden;
   position: relative;
   display: flex;
   flex-direction: column;
   transition: background-color var(--transition-theme) ease;
+  margin: 0 auto;
 }
 
 /* ---------- Fixed Header ---------- */
@@ -1767,3 +1772,5 @@
     pointer-events: none;
   }
 }
+ 
+ 

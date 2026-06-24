@@ -78,7 +78,7 @@
 }
 
 .nav-item.active {
-  color: #0071E3;
+  color: #A78BFA;
 }
 
 [data-theme="dark"] .nav-item.active {
@@ -87,20 +87,22 @@
 
 .nav-item.active .nav-icon {
   transform: translateY(-2px);
+  filter: drop-shadow(0 0 12px rgba(67, 56, 202, 0.85));
 }
 
 [data-theme="dark"] .nav-item.active .nav-icon {
-  filter: none;
+  filter: drop-shadow(0 0 14px rgba(168, 85, 247, 0.9));
 }
 
 .active-dot {
   position: absolute;
   bottom: -8px;
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 999px;
-  background: currentColor;
-  animation: scaleIn 0.2s ease-out forwards;
+  background: linear-gradient(135deg, #38bdf8, #8b5cf6, #f472b6);
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.6), 0 0 26px rgba(139, 92, 246, 0.45);
+  animation: scaleIn 0.25s ease-out forwards;
 }
 
 .nav-label {

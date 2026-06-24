@@ -2,6 +2,7 @@ import React from 'react';
 import { Calendar, Clock, MapPin, Navigation, UserPlus, Users } from 'lucide-react';
 import type { ExploreEvent } from './exploreEvents';
 import { getEventOrganizer } from './exploreEvents';
+import { ImageWithFallback } from '../DiscoverPage/ImageWithFallback';
 
 type EventMapPopupProps = {
   event: ExploreEvent;
@@ -26,7 +27,13 @@ export const EventMapPopup: React.FC<EventMapPopupProps> = ({
         <h4 className="map-popup-title">{event.title}</h4>
 
         <button type="button" className="map-popup-organizer" onClick={onOrganizerClick}>
-          <img src={organizer.avatar} alt={organizer.name} className="map-popup-organizer-avatar" />
+          <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+            <ImageWithFallback 
+              src={organizer.avatar} 
+              alt={organizer.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
           <span className="map-popup-organizer-name">{organizer.name}</span>
           <span className="map-popup-organizer-username">@{organizer.username}</span>
         </button>

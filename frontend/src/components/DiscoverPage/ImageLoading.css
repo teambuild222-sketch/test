@@ -1,0 +1,213 @@
+/* ============================================
+   IMAGE LOADING & ERROR HANDLING STYLES
+   ============================================ */
+
+/* Image with Fallback Component */
+.image-with-fallback {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, 
+    var(--bg-secondary) 0%, 
+    var(--bg-tertiary) 50%, 
+    var(--bg-secondary) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Loading skeleton pulse effect */
+.image-with-fallback img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Error state styling */
+.image-error-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #64748b;
+  font-size: 12px;
+  text-align: center;
+  padding: 16px;
+}
+
+/* Featured event card image container */
+.featured-event-image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 32px;
+}
+
+.featured-event-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Event card image container */
+.event-card-image-container {
+  position: relative;
+  width: 100%;
+  height: 192px;
+  overflow: hidden;
+  border-radius: 28px;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+}
+
+.event-card-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Venue card image container */
+.venue-card-image-container {
+  position: relative;
+  width: 100%;
+  height: 176px;
+  overflow: hidden;
+  border-radius: 32px 32px 0 0;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+}
+
+.venue-card-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Recommendation card image container */
+.recommendation-card-image-container {
+  position: relative;
+  width: 100%;
+  height: 176px;
+  overflow: hidden;
+  border-radius: 32px 32px 0 0;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+}
+
+.recommendation-card-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .event-card-image-container {
+    height: 160px;
+  }
+  
+  .venue-card-image-container,
+  .recommendation-card-image-container {
+    height: 144px;
+  }
+}
+
+/* Dark mode support - ensures images look good */
+@media (prefers-color-scheme: dark) {
+  .image-with-fallback {
+    background: linear-gradient(90deg, 
+      rgba(15, 23, 42, 0.8) 0%, 
+      rgba(30, 41, 59, 0.8) 50%, 
+      rgba(15, 23, 42, 0.8) 100%);
+  }
+  
+  .image-error-fallback {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  }
+}
+
+/* Light mode support */
+@media (prefers-color-scheme: light) {
+  .image-with-fallback {
+    background: linear-gradient(90deg, 
+      rgba(241, 245, 250, 0.8) 0%, 
+      rgba(226, 232, 240, 0.8) 50%, 
+      rgba(241, 245, 250, 0.8) 100%);
+  }
+  
+  .image-error-fallback {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    color: #94a3b8;
+  }
+}
+
+/* Ensure image containers maintain aspect ratio */
+.image-with-fallback {
+  aspect-ratio: auto;
+  contain: layout style paint;
+}
+
+/* Prevent layout shift with aspect ratio box */
+.image-container-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Progressive image loading - fade in effect */
+.image-fade-in {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Hover effects for image cards */
+.image-card-hover {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.image-card-hover:hover {
+  transform: translateY(-4px);
+}
+
+/* Skeleton loading pulse */
+.skeleton-loading {
+  background: linear-gradient(90deg, 
+    #1e293b 0%, 
+    #334155 50%, 
+    #1e293b 100%);
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% {
+    background-position: 200% 0;
+  }
+  50% {
+    background-position: -200% 0;
+  }
+}

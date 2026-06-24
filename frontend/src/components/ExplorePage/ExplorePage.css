@@ -1327,3 +1327,273 @@ body {
 .animate-slideDown {
   animation: slideDown 260ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* ======================================================================== 
+   MOBILE-SPECIFIC LAYOUT - Explore Page on Phone Viewports
+   ======================================================================== */
+
+@media (max-width: 768px) {
+  .explore-container-fullscreen {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* MOBILE HEADER */
+  .explore-mobile-header {
+    position: relative;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    padding-top: max(12px, env(safe-area-inset-top));
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+  }
+
+  /* Mobile Search Box */
+  .explore-search-box-mobile {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 40px;
+    padding: 0 12px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    transition: all 0.2s ease;
+  }
+
+  .explore-search-box-mobile:focus-within {
+    border-color: var(--explore-accent);
+    background: var(--bg-secondary);
+  }
+
+  .explore-search-box-mobile .search-box-icon {
+    position: absolute;
+    left: 12px;
+    color: var(--explore-text-muted);
+    pointer-events: none;
+    flex-shrink: 0;
+  }
+
+  .search-input-mobile {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0 8px 0 32px;
+    color: var(--explore-text);
+    font-family: var(--font-family);
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .search-input-mobile::placeholder {
+    color: var(--explore-text-muted);
+  }
+
+  /* Mobile Header Theme Button */
+  .mobile-header-btn {
+    background: transparent;
+    border: none;
+    color: var(--explore-text);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .mobile-header-btn:active {
+    background: var(--border-color);
+  }
+
+  /* MOBILE CATEGORY FILTER BAR */
+  .explore-filter-bar-mobile {
+    position: relative;
+    z-index: 150;
+    display: flex;
+    align-items: stretch;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  .explore-filter-main-mobile {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    padding: 8px 16px;
+    padding-bottom: 8px;
+
+    /* Hide scrollbar for modern browsers */
+    scrollbar-width: none;
+  }
+
+  .explore-filter-main-mobile::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Category Dropdown for Mobile */
+  .explore-filter-dropdown-wrap {
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .explore-filter-dropdown-btn-mobile {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    background: var(--bg-primary);
+    color: var(--explore-text);
+    font-family: var(--font-family);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .explore-filter-dropdown-btn-mobile:active {
+    transform: scale(0.98);
+  }
+
+  /* Horizontally Scrollable Chips Container */
+  .explore-filter-chips-scroll {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: visible;
+  }
+
+  /* Mobile Filter Chips */
+  .explore-filter-bar-mobile .explore-filter-chip {
+    height: 32px;
+    padding: 0 12px;
+    font-size: 12px;
+    border-radius: 20px;
+    flex-shrink: 0;
+  }
+
+  .explore-filter-bar-mobile .explore-filter-chip.active {
+    font-weight: 600;
+  }
+
+  /* Desktop Filter Bar - Hide on Mobile */
+  .explore-filter-bar {
+    display: none;
+  }
+
+  /* Vertical Control Pill - Hide on Mobile */
+  .vertical-control-pill {
+    display: none;
+  }
+
+  /* iOS Zoom Controls - Hide on Mobile (use map zoom) */
+  .ios-zoom-controls {
+    display: none;
+  }
+
+  /* Map adjusts to fill remaining space */
+  .map-view-hero {
+    position: relative;
+    flex: 1;
+    top: auto;
+    left: auto;
+    width: 100%;
+    height: auto;
+    z-index: 1;
+  }
+
+  /* Ensure map container fills the space */
+  .map-view-hero .leaflet-container {
+    height: 100%;
+  }
+
+  /* Mobile-friendly panels positioning */
+  .search-panel-container.ios-style {
+    left: 8px !important;
+    right: 8px !important;
+    width: calc(100% - 16px) !important;
+    top: auto !important;
+    bottom: auto !important;
+    max-height: 70vh !important;
+    margin: auto !important;
+  }
+
+  /* iOS Panel - adjust for mobile */
+  .ios-panel-container {
+    max-height: 80vh;
+  }
+
+  /* Adjust notifications and settings panels on mobile */
+  .ios-panel-backdrop {
+    z-index: 998;
+  }
+
+  /* FAB positioning on mobile */
+  .fab-create-event-overlay.ios-style {
+    bottom: max(24px, calc(16px + env(safe-area-inset-bottom)));
+    right: 16px;
+    z-index: 500;
+  }
+}
+
+/* EXTRA SMALL PHONES - 360px and below */
+@media (max-width: 380px) {
+  .explore-mobile-header {
+    padding: 10px 12px;
+    padding-top: max(10px, env(safe-area-inset-top));
+    gap: 8px;
+  }
+
+  .explore-search-box-mobile {
+    height: 36px;
+  }
+
+  .search-input-mobile {
+    font-size: 13px;
+  }
+
+  .explore-filter-main-mobile {
+    padding: 6px 12px;
+  }
+
+  .explore-filter-bar-mobile .explore-filter-chip {
+    height: 28px;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+
+  .explore-filter-dropdown-btn-mobile {
+    height: 28px;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+
+  .mobile-header-btn {
+    width: 36px;
+    height: 36px;
+  }
+}

@@ -3,7 +3,7 @@ import json
 import logging
 import asyncio
 from datetime import datetime
-from contextlib import lifespan
+from contextlib import asynccontextmanager
 from typing import Dict, Any, List
 from fastapi import FastAPI, Depends, HTTPException, Header, Request, Body
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 
 # Local imports
 from database import init_db, SessionLocal, User, Event, EventMember, UserConnection, AIConversation, AIMessage, Badge, UserBadge, RewardEvent
-from ai_service import stream_response, execute_tool, build_system_prompt, TOOLS_SCHEMA
+from ai_service import stream_response, execute_tool, build_system_prompt, TOOLS_SCHEMA, is_groq_configured
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("main")
@@ -22,7 +22,7 @@ logger = logging.getLogger("main")
 cancel_events: Dict[int, asyncio.Event] = {}
 
 # Lifespan event handler
-@lifespan
+@asynccontextmanager
 async def app_lifespan(app: FastAPI):
     logger.info("Initializing database...")
     init_db()
@@ -69,6 +69,14 @@ class ConversationCreate(BaseModel):
 @app.get("/api/message")
 async def read_message() -> dict:
     return {"message": "Hello from Zenex Python backend!"}
+
+# Health Check Endpoint
+@app.get("/api/ai/health")
+async def ai_health():
+    return {
+        "status": "online",
+        "provider": "groq"
+    }
 
 # --- AI CHAT CONVERSATIONS ENDPOINTS ---
 
@@ -155,7 +163,7 @@ async def stream_ai_chat(
     # 1. Save user message in database
     user_msg = AIMessage(conversation_id=conv_id, sender="user", text=user_text)
     db.add(user_msg)
-    conv.updated_at = asyncio.subprocess.datetime.utcnow()
+    conv.updated_at = datetime.utcnow()
     db.commit()
     
     # Check for slash commands
@@ -225,6 +233,7 @@ async def stream_ai_chat(
         loop = asyncio.get_event_loop()
         
         try:
+            logger.info(f"User message received (Streaming): '{user_text}' in conversation {conv_id}")
             # We run the generator in a thread pool since Groq sdk is synchronous
             def get_chunks():
                 return list(stream_response(db, user, formatted_history, cancel_events[conv_id]))
@@ -239,9 +248,12 @@ async def stream_ai_chat(
                 yield chunk
                 await asyncio.sleep(0.005) # smooth stream
                 
+            logger.info(f"Response received (Streaming completed). Final text length: {len(full_reply)}")
         except Exception as e:
-            logger.error(f"Error in stream generator: {e}")
-            yield f"Error: {str(e)}"
+            logger.error(f"Error details - Error in stream generator: {e}")
+            fallback_response = "Hi 👋 I'm ZENEX AI. My AI services are temporarily unavailable, but I'm still online. Please try again in a few moments."
+            yield fallback_response
+            full_reply = fallback_response
         finally:
             # Clean up cancel event
             cancel_events.pop(conv_id, None)
@@ -292,6 +304,23 @@ def ai_chat(
     conv.updated_at = datetime.utcnow()
     db.commit()
     
+    logger.info(f"User message received: '{user_text}' in conversation {conv_id}")
+
+    # Check if Groq is configured
+    if not is_groq_configured():
+        dev_response = "Hello 👋 I'm ZENEX AI. The AI backend is currently in development mode."
+        logger.info("Groq is not configured. Returning development mode message.")
+        ai_msg = AIMessage(conversation_id=conv_id, sender="assistant", text=dev_response)
+        db.add(ai_msg)
+        db.commit()
+        db.refresh(ai_msg)
+        return {
+            "id": ai_msg.id,
+            "sender": "assistant",
+            "text": dev_response,
+            "created_at": ai_msg.created_at.isoformat()
+        }
+
     # Get context (last 20 messages)
     history_msgs = db.query(AIMessage).filter_by(conversation_id=conv_id).order_by(AIMessage.id).all()
     formatted_history = []
@@ -301,16 +330,22 @@ def ai_chat(
         
     # Initialize Groq client
     groq_api_key = os.getenv("GROQ_API_KEY")
-    if not groq_api_key:
-        logger.error("Groq API Key is not configured. Missing GROQ_API_KEY in environment.")
-        raise HTTPException(status_code=500, detail="Groq API Key not configured.")
-        
     from groq import Groq
     try:
         groq_client = Groq(api_key=groq_api_key)
     except Exception as init_err:
-        logger.error(f"Groq client initialization failed: {init_err}")
-        raise HTTPException(status_code=500, detail="Groq client initialization failed.")
+        logger.error(f"Error details - Groq client initialization failed: {init_err}")
+        fallback_response = "Hi 👋 I'm ZENEX AI. My AI services are temporarily unavailable, but I'm still online. Please try again in a few moments."
+        ai_msg = AIMessage(conversation_id=conv_id, sender="assistant", text=fallback_response)
+        db.add(ai_msg)
+        db.commit()
+        db.refresh(ai_msg)
+        return {
+            "id": ai_msg.id,
+            "sender": "assistant",
+            "text": fallback_response,
+            "created_at": ai_msg.created_at.isoformat()
+        }
         
     system_prompt = build_system_prompt(user, db)
     api_messages = [{"role": "system", "content": system_prompt}]
@@ -323,18 +358,19 @@ def ai_chat(
     ai_response_text = ""
     completion = None
     
-    logger.info(f"Prompt sent to Groq: {user_text}")
+    logger.info(f"Request sent to Groq. Primary Model: {primary_model}, Prompt: {user_text}")
     
     try:
-        logger.info(f"Calling primary model: {primary_model}")
         completion = groq_client.chat.completions.create(
             model=primary_model,
             messages=api_messages,
             tools=TOOLS_SCHEMA,
             tool_choice="auto"
         )
+        logger.info(f"Response received from Groq (Primary Model): {completion.choices[0].message.content or '[tool call]'}")
     except Exception as e:
-        logger.warning(f"Groq primary model call failed. Exact error: {e}. Falling back to {fallback_model}...")
+        logger.warning(f"Error details - Groq primary model call failed: {e}. Falling back to {fallback_model}...")
+        logger.info(f"Request sent to Groq. Fallback Model: {fallback_model}, Prompt: {user_text}")
         try:
             completion = groq_client.chat.completions.create(
                 model=fallback_model,
@@ -342,9 +378,20 @@ def ai_chat(
                 tools=TOOLS_SCHEMA,
                 tool_choice="auto"
             )
+            logger.info(f"Response received from Groq (Fallback Model): {completion.choices[0].message.content or '[tool call]'}")
         except Exception as fallback_e:
-            logger.error(f"Groq fallback model call failed. Exact error: {fallback_e}")
-            raise HTTPException(status_code=502, detail="Sorry, I'm currently unavailable. Please try again later.")
+            logger.error(f"Error details - Groq fallback model call failed: {fallback_e}")
+            fallback_response = "Hi 👋 I'm ZENEX AI. My AI services are temporarily unavailable, but I'm still online. Please try again in a few moments."
+            ai_msg = AIMessage(conversation_id=conv_id, sender="assistant", text=fallback_response)
+            db.add(ai_msg)
+            db.commit()
+            db.refresh(ai_msg)
+            return {
+                "id": ai_msg.id,
+                "sender": "assistant",
+                "text": fallback_response,
+                "created_at": ai_msg.created_at.isoformat()
+            }
 
     # Process response
     response_message = completion.choices[0].message
@@ -365,30 +412,43 @@ def ai_chat(
             })
             
         try:
-            logger.info("Re-submitting with tool output to primary model...")
+            logger.info(f"Request sent to Groq (Re-submit). Primary Model: {primary_model}")
             completion2 = groq_client.chat.completions.create(
                 model=primary_model,
                 messages=api_messages
             )
             ai_response_text = completion2.choices[0].message.content
+            logger.info(f"Response received from Groq (Re-submit Primary Model): {ai_response_text}")
         except Exception as e2:
-            logger.warning(f"Re-submitting failed with primary model. Exact error: {e2}. Trying fallback...")
+            logger.warning(f"Error details - Re-submitting failed with primary model: {e2}. Trying fallback...")
+            logger.info(f"Request sent to Groq (Re-submit). Fallback Model: {fallback_model}")
             try:
                 completion2 = groq_client.chat.completions.create(
                     model=fallback_model,
                     messages=api_messages
                 )
                 ai_response_text = completion2.choices[0].message.content
+                logger.info(f"Response received from Groq (Re-submit Fallback Model): {ai_response_text}")
             except Exception as fallback_e2:
-                logger.error(f"Re-submit fallback failed. Exact error: {fallback_e2}")
-                raise HTTPException(status_code=502, detail="Sorry, I'm currently unavailable. Please try again later.")
+                logger.error(f"Error details - Re-submit fallback failed: {fallback_e2}")
+                fallback_response = "Hi 👋 I'm ZENEX AI. My AI services are temporarily unavailable, but I'm still online. Please try again in a few moments."
+                ai_msg = AIMessage(conversation_id=conv_id, sender="assistant", text=fallback_response)
+                db.add(ai_msg)
+                db.commit()
+                db.refresh(ai_msg)
+                return {
+                    "id": ai_msg.id,
+                    "sender": "assistant",
+                    "text": fallback_response,
+                    "created_at": ai_msg.created_at.isoformat()
+                }
     else:
         ai_response_text = response_message.content
         
     if not ai_response_text:
         ai_response_text = "I received your message but could not generate a response."
         
-    logger.info(f"Response received from Groq (len={len(ai_response_text)})")
+    logger.info(f"Response received (completed len={len(ai_response_text)})")
     
     # Save response to database
     ai_msg = AIMessage(conversation_id=conv_id, sender="assistant", text=ai_response_text)

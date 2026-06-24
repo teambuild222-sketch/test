@@ -5,92 +5,94 @@
 /* ---------- Light Mode (Default) ---------- */
 :root {
   /* Backgrounds */
-  --bg-primary: #F3F3F3;
-  --bg-secondary: #FFFFFF;
-  --bg-tertiary: #EAEAEA;
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F8F9FB;
+  --bg-tertiary: #F8F9FB;
   --bg-surface: rgba(255, 255, 255, 0.95);
-  --bg-surface-hover: rgba(255, 255, 255, 1);
+  --bg-surface-hover: rgba(248, 249, 251, 1);
   --bg-card: #FFFFFF;
   --bg-card-solid: #FFFFFF;
-  --bg-input: #FFFFFF;
+  --bg-input: #F8F9FB;
   --bg-nav: #FFFFFF;
   --bg-modal-overlay: rgba(0, 0, 0, 0.4);
-  --bg-badge: rgba(142, 139, 130, 0.1);
+  --bg-badge: rgba(139, 92, 246, 0.1);
 
   /* Text */
-  --text-primary: #343434;
-  --text-secondary: #8E8B82;
+  --text-primary: #111111;
+  --text-secondary: #666666;
   --text-tertiary: #8E8B82;
-  --text-inverse: #F3F3F3;
-  --text-accent: #E9DCBE;
-  --text-on-gradient: #343434;
+  --text-inverse: #FFFFFF;
+  --text-accent: #8B5CF6;
+  --text-on-gradient: #FFFFFF;
 
   /* Accent Colors */
-  --accent-primary: #E9DCBE;
-  --accent-primary-hover: #DFD0AC;
-  --accent-primary-light: rgba(233, 220, 190, 0.2);
-  --accent-purple: #E9DCBE;
-  --accent-purple-light: rgba(233, 220, 190, 0.15);
-  --accent-purple-hover: #DFD0AC;
-  --accent-blue: #8E8B82;
-  --accent-blue-light: rgba(142, 139, 130, 0.15);
+  --primary: #8B5CF6;
+  --primary-light: rgba(139, 92, 246, 0.15);
+  --accent-primary: #8B5CF6;
+  --accent-primary-hover: #7C3AED;
+  --accent-primary-light: rgba(139, 92, 246, 0.15);
+  --accent-purple: #8B5CF6;
+  --accent-purple-light: rgba(139, 92, 246, 0.15);
+  --accent-purple-hover: #7C3AED;
+  --accent-blue: #3B82F6;
+  --accent-blue-light: rgba(59, 130, 246, 0.15);
   --accent-pink: #EF4444; /* Soft Red Accent for Logout/Warnings */
   --accent-pink-light: rgba(239, 68, 68, 0.15);
-  --accent-orange: #8E8B82;
-  --accent-orange-light: rgba(142, 139, 130, 0.15);
+  --accent-orange: #F97316;
+  --accent-orange-light: rgba(249, 115, 22, 0.15);
 
   /* Button Specific */
-  --btn-bg: #343434;
-  --btn-text: #F3F3F3;
-  --btn-hover: #1E1E1E;
+  --btn-bg: #8B5CF6;
+  --btn-text: #FFFFFF;
+  --btn-hover: #7C3AED;
 
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #343434 0%, #8E8B82 50%, #E9DCBE 100%);
-  --gradient-purple-blue: linear-gradient(135deg, #343434 0%, #8E8B82 100%);
-  --gradient-purple-pink: linear-gradient(135deg, #343434 0%, #E9DCBE 100%);
-  --gradient-blue-pink: linear-gradient(135deg, #8E8B82 0%, #E9DCBE 100%);
-  --gradient-card: linear-gradient(145deg, rgba(233, 220, 190, 0.05) 0%, rgba(142, 139, 130, 0.05) 100%);
-  --gradient-card-hover: linear-gradient(145deg, rgba(233, 220, 190, 0.1) 0%, rgba(142, 139, 130, 0.1) 100%);
-  --gradient-nav-indicator: #343434;
-  --gradient-map: linear-gradient(180deg, rgba(243, 243, 243, 0) 0%, rgba(243, 243, 243, 0.95) 100%);
+  --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+  --gradient-purple-blue: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%);
+  --gradient-purple-pink: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+  --gradient-blue-pink: linear-gradient(135deg, #3B82F6 0%, #EC4899 100%);
+  --gradient-card: linear-gradient(145deg, rgba(139, 92, 246, 0.02) 0%, rgba(236, 72, 153, 0.02) 100%);
+  --gradient-card-hover: linear-gradient(145deg, rgba(139, 92, 246, 0.05) 0%, rgba(236, 72, 153, 0.05) 100%);
+  --gradient-nav-indicator: #8B5CF6;
+  --gradient-map: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.95) 100%);
 
   /* Borders */
-  --border-color: rgba(52, 52, 52, 0.08);
-  --border-accent: #E9DCBE;
-  --border-glass: rgba(52, 52, 52, 0.08);
-  --divider-color: rgba(52, 52, 52, 0.08);
+  --border-color: #E5E7EB;
+  --border-accent: #8B5CF6;
+  --border-glass: rgba(139, 92, 246, 0.08);
+  --divider-color: #E5E7EB;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(52, 52, 52, 0.04);
-  --shadow-md: 0 4px 12px rgba(52, 52, 52, 0.05);
-  --shadow-lg: 0 8px 24px rgba(52, 52, 52, 0.08);
-  --shadow-xl: 0 16px 40px rgba(52, 52, 52, 0.1);
-  --shadow-glow: none;
-  --shadow-glow-sm: none;
-  --shadow-glow-purple: none;
-  --shadow-glow-blue: none;
-  --shadow-glow-pink: none;
-  --shadow-card: 0 2px 8px rgba(52, 52, 52, 0.04);
-  --shadow-nav: 0 -2px 10px rgba(52, 52, 52, 0.04);
-  --shadow-button: 0 2px 6px rgba(52, 52, 52, 0.06);
-  --shadow-fab: 0 4px 12px rgba(52, 52, 52, 0.1);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(139, 92, 246, 0.05);
+  --shadow-lg: 0 8px 24px rgba(139, 92, 246, 0.08);
+  --shadow-xl: 0 16px 40px rgba(139, 92, 246, 0.1);
+  --shadow-glow: 0 0 15px rgba(139, 92, 246, 0.2);
+  --shadow-glow-sm: 0 0 8px rgba(139, 92, 246, 0.15);
+  --shadow-glow-purple: 0 0 15px rgba(139, 92, 246, 0.3);
+  --shadow-glow-blue: 0 0 15px rgba(59, 130, 246, 0.3);
+  --shadow-glow-pink: 0 0 15px rgba(236, 72, 153, 0.3);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-nav: 0 -2px 10px rgba(0, 0, 0, 0.04);
+  --shadow-button: 0 2px 6px rgba(139, 92, 246, 0.1);
+  --shadow-fab: 0 4px 12px rgba(139, 92, 246, 0.2);
 
   /* Glassmorphism */
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(52, 52, 52, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(229, 231, 235, 0.7);
   --glass-blur: blur(20px);
   --glass-bg-strong: rgba(255, 255, 255, 0.9);
 
   /* Status Colors */
-  --success: #8E8B82;
-  --success-bg: rgba(142, 139, 130, 0.1);
-  --warning: #E9DCBE;
-  --warning-bg: rgba(233, 220, 190, 0.1);
+  --success: #10B981;
+  --success-bg: rgba(16, 185, 129, 0.1);
+  --warning: #F59E0B;
+  --warning-bg: rgba(245, 158, 11, 0.1);
   --error: #EF4444;
   --error-bg: rgba(239, 68, 68, 0.1);
-  --info: #8E8B82;
-  --online: #8E8B82;
-  --offline: #CCCCCC;
+  --info: #3B82F6;
+  --online: #10B981;
+  --offline: #9CA3AF;
 
   /* Spacing */
   --space-xs: 4px;
@@ -112,7 +114,8 @@
   --radius-full: 9999px;
 
   /* Typography */
-  --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* Prefer Apple San Francisco / system UI fonts. Do NOT include proprietary files; this uses the system stack when available. */
+  --font-family: -apple-system, "SF Pro Text", "SF Pro Display", "San Francisco", system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
   --font-xs: 11px;
   --font-sm: 13px;
   --font-base: 15px;
@@ -141,85 +144,87 @@
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --content-padding: 20px;
-  --max-width: 430px;
+  --max-width: 390px;
 }
 
 /* ---------- Dark Mode ---------- */
 [data-theme="dark"] {
   /* Backgrounds */
-  --bg-primary: #000000;
-  --bg-secondary: #1C1C1E;
-  --bg-tertiary: #2C2C2E;
-  --bg-surface: rgba(28, 28, 30, 0.92);
-  --bg-surface-hover: rgba(44, 44, 46, 1);
-  --bg-card: #1C1C1E;
-  --bg-card-solid: #1C1C1E;
-  --bg-input: #2C2C2E;
-  --bg-nav: #1C1C1E;
+  --bg-primary: #0B0B0F;
+  --bg-secondary: #14151A;
+  --bg-tertiary: #14151A;
+  --bg-surface: rgba(26, 28, 34, 0.92);
+  --bg-surface-hover: rgba(36, 38, 44, 1);
+  --bg-card: #1A1C22;
+  --bg-card-solid: #1A1C22;
+  --bg-input: #14151A;
+  --bg-nav: #0B0B0F;
   --bg-modal-overlay: rgba(0, 0, 0, 0.75);
-  --bg-badge: rgba(10, 132, 255, 0.12);
+  --bg-badge: rgba(139, 92, 246, 0.15);
 
   /* Text */
   --text-primary: #FFFFFF;
-  --text-secondary: #98989D;
-  --text-tertiary: #98989D;
-  --text-inverse: #000000;
-  --text-accent: #0A84FF;
+  --text-secondary: #A1A1AA;
+  --text-tertiary: #71717A;
+  --text-inverse: #0B0B0F;
+  --text-accent: #8B5CF6;
 
   /* Accent Colors */
-  --accent-primary: #0A84FF;
-  --accent-primary-hover: #0062D1;
-  --accent-primary-light: rgba(10, 132, 255, 0.16);
-  --accent-purple: #0A84FF;
-  --accent-purple-light: rgba(10, 132, 255, 0.12);
-  --accent-purple-hover: #0062D1;
-  --accent-blue: #0A84FF;
-  --accent-blue-light: rgba(10, 132, 255, 0.12);
-  --accent-pink: #FF375F;
-  --accent-pink-light: rgba(255, 55, 95, 0.15);
-  --accent-orange: #FF9F0A;
-  --accent-orange-light: rgba(255, 159, 10, 0.12);
+  --primary: #8B5CF6;
+  --primary-light: rgba(139, 92, 246, 0.2);
+  --accent-primary: #8B5CF6;
+  --accent-primary-hover: #7C3AED;
+  --accent-primary-light: rgba(139, 92, 246, 0.2);
+  --accent-purple: #8B5CF6;
+  --accent-purple-light: rgba(139, 92, 246, 0.15);
+  --accent-purple-hover: #7C3AED;
+  --accent-blue: #3B82F6;
+  --accent-blue-light: rgba(59, 130, 246, 0.15);
+  --accent-pink: #EF4444;
+  --accent-pink-light: rgba(239, 68, 68, 0.15);
+  --accent-orange: #F97316;
+  --accent-orange-light: rgba(249, 115, 22, 0.15);
 
   /* Borders */
-  --border-color: rgba(56, 56, 58, 0.85);
-  --border-accent: #38383A;
-  --border-glass: rgba(56, 56, 58, 0.65);
-  --divider-color: rgba(56, 56, 58, 0.5);
+  --border-color: #2A2C34;
+  --border-accent: #8B5CF6;
+  --border-glass: rgba(139, 92, 246, 0.15);
+  --divider-color: #2A2C34;
 
   /* Buttons */
-  --btn-bg: #0A84FF;
+  --btn-bg: #8B5CF6;
   --btn-text: #FFFFFF;
-  --btn-hover: #0A6DE6;
+  --btn-hover: #7C3AED;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
-  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.35);
-  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.45);
-  --shadow-xl: 0 16px 50px rgba(0, 0, 0, 0.55);
-  --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.45);
-  --shadow-nav: 0 -4px 20px rgba(0, 0, 0, 0.35);
-  --shadow-button: 0 2px 8px rgba(0, 0, 0, 0.35);
-  --shadow-fab: 0 6px 24px rgba(0, 0, 0, 0.45);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 16px 50px rgba(0, 0, 0, 0.7);
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-nav: 0 -4px 20px rgba(0, 0, 0, 0.5);
+  --shadow-button: 0 2px 8px rgba(0, 0, 0, 0.5);
+  --shadow-fab: 0 6px 24px rgba(139, 92, 246, 0.3);
 
   /* Glassmorphism */
-  --glass-bg: rgba(28, 28, 30, 0.72);
-  --glass-border: rgba(56, 56, 58, 0.55);
-  --glass-bg-strong: rgba(28, 28, 30, 0.88);
+  --glass-bg: rgba(26, 28, 34, 0.75);
+  --glass-border: rgba(42, 44, 52, 0.7);
+  --glass-bg-strong: rgba(26, 28, 34, 0.9);
 
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, rgba(10, 132, 255, 0.16) 0%, rgba(28, 28, 30, 0.85) 100%);
-  --gradient-purple-blue: linear-gradient(135deg, rgba(10, 132, 255, 0.22) 0%, rgba(28, 28, 30, 0.9) 100%);
-  --gradient-purple-pink: linear-gradient(135deg, rgba(10, 132, 255, 0.16) 0%, rgba(58, 58, 60, 0.92) 100%);
-  --gradient-blue-pink: linear-gradient(135deg, rgba(10, 132, 255, 0.2) 0%, rgba(28, 28, 30, 0.94) 100%);
-  --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.06) 100%);
-  --gradient-card-hover: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.08) 100%);
-  --gradient-nav-indicator: #0A84FF;
-  --gradient-map: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.9) 100%);
+  --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+  --gradient-purple-blue: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%);
+  --gradient-purple-pink: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+  --gradient-blue-pink: linear-gradient(135deg, #3B82F6 0%, #EC4899 100%);
+  --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.01) 0%, rgba(255, 255, 255, 0.03) 100%);
+  --gradient-card-hover: linear-gradient(145deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.05) 100%);
+  --gradient-nav-indicator: #8B5CF6;
+  --gradient-map: linear-gradient(180deg, rgba(11, 11, 15, 0) 0%, rgba(11, 11, 15, 0.95) 100%);
 
   /* Status */
-  --success-bg: rgba(10, 132, 255, 0.1);
-  --warning-bg: rgba(255, 159, 10, 0.12);
-  --error-bg: rgba(255, 75, 80, 0.18);
+  --success-bg: rgba(16, 185, 129, 0.15);
+  --warning-bg: rgba(245, 158, 11, 0.15);
+  --error-bg: rgba(239, 68, 68, 0.15);
 }
 
 /* ============================================

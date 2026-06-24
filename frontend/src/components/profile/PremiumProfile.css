@@ -1,0 +1,68 @@
+/* PremiumProfile.css
+   Apple-inspired profile UI with glassmorphism and neon accents
+*/
+:root{
+  --bg:#000000;
+  --glass: rgba(255,255,255,0.03);
+  --glass-2: rgba(255,255,255,0.02);
+  --accent-blue: #007aff;
+  --accent-purple: #af52de;
+  --neon: linear-gradient(135deg,var(--accent-blue),var(--accent-purple));
+  --radius-lg: 24px;
+  --shadow-sm: 0 6px 18px rgba(0,0,0,0.6);
+  --glass-border: rgba(255,255,255,0.04);
+}
+
+.pp-shell{background:var(--bg);color:#fff;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;padding:18px;min-height:100%;box-sizing:border-box}
+
+.pp-header{display:flex;align-items:center;justify-content:space-between;padding:6px 2px 18px}
+.pp-icon-btn{background:var(--glass);border:1px solid var(--glass-border);color:#fff;width:44px;height:44px;border-radius:999px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform .18s ease, box-shadow .18s}
+.pp-icon-btn:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(0,0,0,0.6)}
+.pp-header-actions{display:flex;gap:10px}
+
+.pp-hero{display:flex;gap:16px;align-items:center;padding-bottom:18px}
+.pp-avatar-wrap{position:relative;width:112px;height:112px;display:flex;align-items:center;justify-content:center}
+
+.pp-logo-glow{width:112px;height:112px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:8px;background:radial-gradient(60% 60% at 40% 30%, rgba(10,132,255,0.12), transparent 25%), radial-gradient(60% 60% at 70% 70%, rgba(175,82,222,0.10), transparent 28%), linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 8px 30px rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.03);}
+.pp-logo-img{width:88px;height:88px;border-radius:18px;object-fit:contain;background:transparent}
+
+.pp-online-dot{position:absolute;right:6px;bottom:6px;width:16px;height:16px;border-radius:50%;background:#34c759;border:3px solid #000;box-shadow:0 6px 14px rgba(52,199,89,0.25)}
+
+.pp-meta{flex:1}
+.pp-name-row{display:flex;align-items:center;gap:8px}
+.pp-fullname{font-size:20px;margin:0;font-weight:800}
+.pp-verified{background:var(--accent-blue);width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,122,255,0.18)}
+.pp-username{color:rgba(255,255,255,0.7);margin-top:6px}
+.pp-bio{color:rgba(255,255,255,0.6);margin:8px 0}
+.pp-meta-row{display:flex;gap:12px;color:rgba(255,255,255,0.6);align-items:center}
+.pp-meta-item{display:flex;align-items:center;gap:8px}
+.meta-icon{opacity:0.85}
+
+.glass-card{background:var(--glass);border:1px solid var(--glass-border);backdrop-filter:blur(12px);padding:12px;border-radius:18px}
+
+.pp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:12px 0;border-radius:20px;padding:12px}
+.pp-stat-item{display:flex;flex-direction:column;align-items:center;padding:10px}
+.pp-stat-value{font-weight:800;font-size:18px}
+.pp-stat-label{color:rgba(255,255,255,0.6);font-size:12px;margin-top:6px}
+
+.pp-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.pp-btn{height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;cursor:pointer;border:1px solid var(--glass-border);transition:transform .18s}
+.pp-btn-edit{background:linear-gradient(135deg,#ffffff08, #ffffff04);color:#fff}
+.pp-btn-share{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.06)}
+.pp-btn:hover{transform:translateY(-3px)}
+
+.pp-tabs{display:flex;gap:8px;margin:6px 0;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.03)}
+.pp-tab{flex:1;background:transparent;border:none;color:rgba(255,255,255,0.6);padding:10px 6px;font-weight:700;cursor:pointer}
+.pp-tab.active{color:var(--accent-blue);position:relative}
+.pp-tab.active:after{content:'';position:absolute;left:12px;right:12px;height:3px;background:var(--accent-blue);border-radius:6px;bottom:-1px}
+
+.pp-interests{margin-top:12px}
+.pp-section-title{color:rgba(255,255,255,0.6);margin:0 0 8px 0;font-size:13px}
+.pp-chips{display:flex;gap:10px;flex-wrap:wrap}
+.pp-chip{padding:8px 14px;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);color:#fff;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,0.6)}
+
+@media(min-width:768px){
+  .pp-shell{padding:28px}
+  .pp-logo-img{width:110px;height:110px}
+  .pp-avatar-wrap{width:140px;height:140px}
+}

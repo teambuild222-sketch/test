@@ -174,7 +174,7 @@ export const ZenexAI: React.FC = () => {
     setAttachment(null);
     setShowEmojiPicker(false);
     setIsLoading(true);
-    setIsStreaming(false);
+    setIsStreaming(true);
     setTypingText('');
 
     // Optimistically push user message to UI log
@@ -186,26 +186,87 @@ export const ZenexAI: React.FC = () => {
     };
     setMessages(prev => [...prev, userMsg]);
 
+    const assistantMsgId = Date.now() + 1;
+    let accumulatedText = '';
+
+    // Set up AbortController for stream cancellation
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
-      // Call standard POST /api/ai/chat
-      const aiReply = await aiApi.sendChatMessage(username, activeConvId, finalPrompt);
-      
-      // Update UI log with actual assistant message
-      setMessages(prev => [...prev, aiReply]);
+      await aiApi.streamResponse(
+        username,
+        activeConvId,
+        finalPrompt,
+        (chunk) => {
+          // Turn off the initial isLoading state once we start receiving chunks
+          setIsLoading(false);
+          accumulatedText += chunk;
+          
+          setMessages(prev => {
+            const lastMsg = prev[prev.length - 1];
+            if (lastMsg && lastMsg.id === assistantMsgId) {
+              return [...prev.slice(0, -1), { ...lastMsg, text: accumulatedText }];
+            } else {
+              return [...prev, {
+                id: assistantMsgId,
+                sender: 'assistant',
+                text: accumulatedText,
+                created_at: new Date().toISOString()
+              }];
+            }
+          });
+        },
+        () => {
+          // Done streaming successfully
+          setIsStreaming(false);
+          setIsLoading(false);
+          abortControllerRef.current = null;
+        },
+        (err) => {
+          console.error('Streaming error:', err);
+          setIsStreaming(false);
+          setIsLoading(false);
+          abortControllerRef.current = null;
+
+          // If stream failed, return fallback message
+          setMessages(prev => {
+            const lastMsg = prev[prev.length - 1];
+            const fallbackText = "Hi 👋 I'm ZENEX AI. My AI services are temporarily unavailable, but I'm still online. Please try again in a few moments.";
+            if (lastMsg && lastMsg.id === assistantMsgId) {
+              // If we already received some content, append the fallback warning message
+              if (lastMsg.text.trim()) {
+                return [...prev.slice(0, -1), { ...lastMsg, text: lastMsg.text + "\n\n" + fallbackText }];
+              }
+            }
+            // Otherwise replace/push fallback
+            return [...prev.filter(m => m.id !== assistantMsgId), {
+              id: assistantMsgId,
+              sender: 'assistant',
+              text: fallbackText,
+              created_at: new Date().toISOString()
+            }];
+          });
+          toast.error('Error receiving AI response');
+        },
+        controller.signal
+      );
     } catch (err: any) {
       console.error(err);
-      
+      setIsStreaming(false);
+      setIsLoading(false);
+      abortControllerRef.current = null;
+
       // Construct fallback error message in assistant bubble
+      const fallbackText = "Hi 👋 I'm ZENEX AI. My AI services are temporarily unavailable, but I'm still online. Please try again in a few moments.";
       const errorMsg: AIMessage = {
-        id: Date.now() + 2,
+        id: assistantMsgId,
         sender: 'assistant',
-        text: "Sorry, I'm currently unavailable. Please try again later.",
+        text: fallbackText,
         created_at: new Date().toISOString()
       };
-      setMessages(prev => [...prev, errorMsg]);
+      setMessages(prev => [...prev.filter(m => m.id !== assistantMsgId), errorMsg]);
       toast.error('Error receiving AI response');
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -324,7 +385,7 @@ export const ZenexAI: React.FC = () => {
   return (
     <div className="zenex-ai-widget">
       
-      {/* 1. Floating AI Assistant Pulse Button */}
+      {/* 1. Floating ZENEX AI Pulse Button */}
       {!isOpen && (
         <button
           className="ai-floating-btn"
@@ -332,14 +393,14 @@ export const ZenexAI: React.FC = () => {
             setIsOpen(true);
             setIsMinimized(false);
           }}
-          aria-label="Zenex AI Assistant"
+          aria-label="ZENEX AI"
         >
           <div className="ai-floating-btn-logo">
             <div className="ai-floating-btn-logo-glow" />
             <img src="/logo.png" alt="Zenex Logo" className="ai-floating-logo-img" />
             <span className="ai-logo-badge">AI</span>
           </div>
-          <span className="ai-floating-btn-label">Zenex AI</span>
+          <span className="ai-floating-btn-label">ZENEX AI</span>
         </button>
       )}
 
@@ -415,7 +476,7 @@ export const ZenexAI: React.FC = () => {
                   </div>
                   <div className="ai-header-meta">
                     <h3>
-                      <span>Zenex AI</span>
+                      <span>ZENEX AI</span>
                       <span className="ai-status-dot" title="Online" />
                     </h3>
                     {!isMobile && <p className="ai-header-tagline">Your Sports & Entertainment Assistant</p>}
@@ -463,7 +524,7 @@ export const ZenexAI: React.FC = () => {
                   <div className="ai-welcome-container">
                     <div className="ai-welcome-card animate-scaleIn">
                       <img src="/logo.png" alt="Zenex Logo" className="ai-welcome-logo" />
-                      <h4 className="ai-welcome-title">Hi, I'm Zenex AI 👋</h4>
+                      <h4 className="ai-welcome-title">Hi, I'm ZENEX AI 👋</h4>
                       <p className="ai-welcome-subtitle" style={{ textAlign: 'center', alignSelf: 'center' }}>
                         How can I help you today?
                       </p>
@@ -490,13 +551,13 @@ export const ZenexAI: React.FC = () => {
                 ))}
 
                 {/* Local Typing Indicator */}
-                {isLoading && (
+                {(isLoading || isStreaming) && (
                   <div className="ai-typing-indicator animate-fadeIn">
                     <div className="ai-typing-dot" />
                     <div className="ai-typing-dot" />
                     <div className="ai-typing-dot" />
                     <span className="ai-typing-text" style={{ marginLeft: '8px', fontSize: '12.5px', color: 'var(--ai-text-secondary)', fontWeight: 500 }}>
-                      Zenex AI is typing...
+                      ZENEX AI is typing...
                     </span>
                   </div>
                 )}
@@ -597,7 +658,7 @@ export const ZenexAI: React.FC = () => {
                             handleSendMessage();
                           }
                         }}
-                        placeholder="Ask Zenex AI anything..."
+                        placeholder="Ask ZENEX AI anything..."
                         className="ai-composer-textarea"
                         disabled={isLoading}
                       />
@@ -634,7 +695,7 @@ export const ZenexAI: React.FC = () => {
                           <button
                             className="ai-toolbar-btn"
                             onClick={toggleVoiceRecording}
-                            title="Voice Assistant Mode"
+                            title="Voice ZENEX AI Mode"
                             disabled={isLoading}
                           >
                             <Mic size={16} />
@@ -694,15 +755,15 @@ export const ZenexAI: React.FC = () => {
         <button
           className="ai-floating-btn animate-scaleIn"
           onClick={() => setIsMinimized(false)}
-          title="Restore Zenex AI"
-          aria-label="Restore Zenex AI"
+          title="Restore ZENEX AI"
+          aria-label="Restore ZENEX AI"
         >
           <div className="ai-floating-btn-logo">
             <div className="ai-floating-btn-logo-glow" />
             <img src="/logo.png" alt="Zenex Logo" className="ai-floating-logo-img" />
             <span className="ai-logo-badge">AI</span>
           </div>
-          <span className="ai-floating-btn-label">Zenex AI</span>
+          <span className="ai-floating-btn-label">ZENEX AI</span>
         </button>
       )}
 

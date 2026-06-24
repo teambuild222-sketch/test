@@ -238,6 +238,89 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onViewOrganizerProfile
   return (
     <div className="explore-container-fullscreen ios-theme">
 
+      {/* MOBILE HEADER - Search Bar & Theme Toggle */}
+      <div className="explore-mobile-header">
+        <div className="explore-search-box-mobile">
+          <Search size={18} className="search-box-icon" />
+          <input
+            type="text"
+            placeholder="Search sports, venues, events..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="search-input-mobile"
+          />
+        </div>
+        <button 
+          type="button" 
+          className="mobile-header-btn theme-btn"
+          onClick={toggleTheme}
+          aria-label="Toggle Theme"
+        >
+          {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
+      </div>
+
+      {/* MOBILE CATEGORY FILTER BAR - Horizontally Scrollable */}
+      <div
+        ref={filterBarRef}
+        className={`explore-filter-bar-mobile explore-filter-bar--${activeMainCategory.toLowerCase()}`}
+        onPointerDown={(e) => e.stopPropagation()}
+        onWheel={(e) => e.stopPropagation()}
+      >
+        <div className="explore-filter-main-mobile">
+          <div className="explore-filter-dropdown-wrap">
+            <button
+              type="button"
+              className="explore-filter-dropdown-btn-mobile"
+              onClick={() => setIsMainDropdownOpen((prev) => !prev)}
+              aria-haspopup="listbox"
+              aria-expanded={isMainDropdownOpen}
+            >
+              <span>{activeMainCategory}</span>
+              <ChevronDown size={14} className={`explore-filter-chevron ${isMainDropdownOpen ? 'open' : ''}`} />
+            </button>
+            {isMainDropdownOpen && (
+              <div className="explore-filter-dropdown-menu" role="listbox">
+                <button
+                  type="button"
+                  className={`explore-filter-dropdown-item ${activeMainCategory === 'Sports' ? 'active' : ''}`}
+                  onClick={() => handleMainCategoryChange('Sports')}
+                >
+                  Sports
+                </button>
+                <button
+                  type="button"
+                  className={`explore-filter-dropdown-item ${activeMainCategory === 'Entertainment' ? 'active' : ''}`}
+                  onClick={() => handleMainCategoryChange('Entertainment')}
+                >
+                  Entertainment
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className="explore-filter-chips-scroll">
+            <button
+              type="button"
+              className={`explore-filter-chip ${activeSubFilter === null ? 'active' : ''}`}
+              onClick={() => setActiveSubFilter(null)}
+            >
+              All
+            </button>
+            {subFilterOptions.map((filter) => (
+              <button
+                key={filter}
+                type="button"
+                className={`explore-filter-chip ${activeSubFilter === filter ? 'active' : ''}`}
+                onClick={() => setActiveSubFilter(filter)}
+              >
+                {subFilterLabel(filter)}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* 90-95% screen map viewport */}
       <div className="map-view-hero">
         <MapContainer
@@ -289,7 +372,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onViewOrganizerProfile
         </MapContainer>
       </div>
 
-      {/* TOP-LEFT FILTER BAR */}
+      {/* TOP-LEFT FILTER BAR - DESKTOP ONLY */}
       <div
         ref={filterBarRef}
         className={`explore-filter-bar explore-filter-bar--${activeMainCategory.toLowerCase()} animate-scaleIn`}

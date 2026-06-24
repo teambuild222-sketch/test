@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar, TabType } from './Navbar';
+import { MobileHeader } from './MobileHeader';
 import { ThemeSwitch } from './ThemeSwitch';
 import ProfileView from './profile/ProfileView';
 import EventCard from './EventCard/EventCard';
@@ -25,11 +26,11 @@ import {
   Sparkles,
   ChevronRight,
 } from 'lucide-react';
-import { MembershipModal, getSavedPlan, PLAN_CHANGE_EVENT, PlanType } from './Membership/Membership';
 import ExplorePage from './ExplorePage/ExplorePage';
+import DiscoverPage from './DiscoverPage/DiscoverPage';
 import { EVENT_ORGANIZERS } from './ExplorePage/exploreEvents';
-import ZenexAI from './ZenexAI/ZenexAI';
 import './Layout.css';
+import './mobile-only.css';
 
 interface Message {
   id: number;
@@ -57,10 +58,6 @@ export const Layout: React.FC = () => {
   const discoverOrganizersRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  // Membership states
-  const [membershipPlan, setMembershipPlan] = useState<PlanType>(getSavedPlan);
-  const [isMembershipOpen, setIsMembershipOpen] = useState(false);
-  const [isMembershipCardVisible, setIsMembershipCardVisible] = useState(true);
   const [fullName, setFullName] = useState(() => localStorage.getItem('zenex-fullname') || 'Katakam Ritvik');
   const [avatar, setAvatar] = useState(() => localStorage.getItem('zenex-avatar') || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&h=300&q=80');
 
@@ -75,21 +72,16 @@ export const Layout: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const handlePlanChange = () => {
-      setMembershipPlan(getSavedPlan());
-    };
     const handleProfileChange = () => {
       setFullName(localStorage.getItem('zenex-fullname') || 'Katakam Ritvik');
       setAvatar(localStorage.getItem('zenex-avatar') || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&h=300&q=80');
     };
     
-    window.addEventListener(PLAN_CHANGE_EVENT, handlePlanChange);
     window.addEventListener('storage', handleProfileChange);
     
     const interval = setInterval(handleProfileChange, 500);
 
     return () => {
-      window.removeEventListener(PLAN_CHANGE_EVENT, handlePlanChange);
       window.removeEventListener('storage', handleProfileChange);
       clearInterval(interval);
     };
@@ -215,106 +207,8 @@ export const Layout: React.FC = () => {
         activeTab === 'home' ? 'home-active' : ''
       }`}
     >
-      {/* Fixed Header */}
-      {activeTab !== 'explore' && (
-        <header className="zenex-header">
-        <div className="zenex-brand-group">
-          {/* Logo element clickable to reset to home */}
-          <div className="zenex-logo-pill" onClick={() => setActiveTab('home')} style={{ cursor: 'pointer' }}>
-            <img src="/logo.png" alt="ZENEX" className="header-logo-img" />
-          </div>
-          <div>
-            <p className="zenex-app-title" onClick={() => setActiveTab('home')} style={{ cursor: 'pointer' }}>ZENEX</p>
-            <p className="zenex-app-tagline">Connect. Play. Experience.</p>
-          </div>
-        </div>
-
-        <div className="zenex-header-actions">
-          {/* Collapsible Sidebar Button (visible on tablet and desktop) */}
-          <button
-            type="button"
-            className="sidebar-toggle-btn"
-            onClick={handleSidebarToggle}
-            aria-label="Toggle sidebar"
-          >
-            {isSidebarOpen ? <ChevronLeft size={18} /> : <Menu size={18} />}
-          </button>
-          
-          <ThemeSwitch />
-
-          {/* Quick Notification Bell */}
-          <button
-            type="button"
-            className="header-action-circle-btn notifications-bell-btn"
-            onClick={() => setIsNotificationsOpen(true)}
-            aria-label="Notifications"
-          >
-            <Bell size={20} />
-            <span className="red-badge-dot">3</span>
-          </button>
-
-          {/* Settings Trigger */}
-          <div className="settings-menu-container">
-            <button
-              className={`settings-trigger ${isSettingsOpen ? 'active' : ''}`}
-              onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-              aria-label="Settings"
-            >
-              <Settings size={20} />
-            </button>
-            {isSettingsOpen && (
-              <>
-                <div className="settings-backdrop" onClick={() => setIsSettingsOpen(false)} />
-                <div className="settings-dropdown animate-scaleIn">
-                  {/* Premium subscription bar */}
-                  <div 
-                    className={`settings-premium-bar plan-${membershipPlan.toLowerCase()}`} 
-                    onClick={() => { setIsSettingsOpen(false); setIsMembershipOpen(true); }}
-                  >
-                    <Sparkles size={14} className="premium-bar-icon" />
-                    <div className="premium-bar-content">
-                      <span className="premium-bar-title">
-                        {membershipPlan === 'FREE' ? 'Zenex Gold / Silver' : `Zenex ${membershipPlan}`}
-                      </span>
-                      <span className="premium-bar-subtitle">
-                        {membershipPlan === 'FREE' ? 'Upgrade to Premium' : 'Manage Subscription'}
-                      </span>
-                    </div>
-                    <ChevronRight size={12} className="premium-bar-arrow" />
-                  </div>
-
-                  <button className="settings-option" onClick={() => { setIsSettingsOpen(false); setActiveTab('profile'); }}>
-                    <UserIcon size={16} />
-                    <span>Edit Profile</span>
-                  </button>
-                  <button className="settings-option" onClick={() => { setIsSettingsOpen(false); alert('Settings clicked'); }}>
-                    <Settings size={16} />
-                    <span>Settings</span>
-                  </button>
-                  <button className="settings-option" onClick={() => { setIsSettingsOpen(false); alert('Privacy clicked'); }}>
-                    <Lock size={16} />
-                    <span>Privacy</span>
-                  </button>
-                  <button className="settings-option" onClick={() => { setIsSettingsOpen(false); alert('Help & Support clicked'); }}>
-                    <HelpCircle size={16} />
-                    <span>Help & Support</span>
-                  </button>
-                  <button className="settings-option" onClick={() => { setIsSettingsOpen(false); alert('About Zenex clicked'); }}>
-                    <Info size={16} />
-                    <span>About Zenex</span>
-                  </button>
-                  <div className="settings-dropdown-divider" />
-                  <button className="settings-option logout-option" onClick={handleLogout}>
-                    <LogOut size={16} />
-                    <span>Logout</span>
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
-      )}
+      {/* Mobile Header with Theme Toggle */}
+      <MobileHeader />
 
       {/* Main Responsive Grid Layout */}
       <div className={`zenex-layout-grid ${activeTab === 'explore' ? 'explore-layout-grid' : ''} ${isSidebarOpen ? 'sidebar-expanded' : 'sidebar-collapsed'}`}>
@@ -496,101 +390,7 @@ export const Layout: React.FC = () => {
           )}
 
           {/* DISCOVER FEED */}
-          {activeTab === 'discover' && (
-            <div className="discover-page-view animate-fadeIn">
-              <section className="zenex-hero-card glass-card">
-                <div className="hero-card-copy">
-                  <span className="hero-chip">Find & Match Activities</span>
-                  <h2>Discover Feed</h2>
-                  <p>Explore the full poster grid of sports, arts, music, wellness and competitive matches.</p>
-                </div>
-                <div className="hero-card-icon">
-                  <div className="hero-icon-glow" />
-                  <Search size={36} />
-                </div>
-              </section>
-
-              {/* Interactive Category Tabs scroll */}
-              <div className="discover-category-scroller">
-                {['All', 'Sports', 'Entertainment', 'Arts', 'Fitness', 'Wellness'].map((cat) => (
-                  <button
-                    key={cat}
-                    className={`discover-category-chip ${activeCategory === cat ? 'active' : ''}`}
-                    onClick={() => setActiveCategory(cat)}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-
-              {/* Grid of poster activity categories */}
-              <section className="discover-grid-section">
-                <h3>Explore Hubs</h3>
-                <div className="discover-grid-layout">
-                  <div className="discover-gradient-card card-purple-blue">
-                    <h4>Sports Tournaments</h4>
-                    <p>Find local tournaments, matches and leagues. Join team lineups or create customized challenges.</p>
-                    <button className="discover-action-btn">Browse Matches</button>
-                  </div>
-
-                  <div className="discover-gradient-card card-purple-pink">
-                    <h4>Performing Arts</h4>
-                    <p>Immerse in local standup comedy showcases, music nights, poetry slams and indie acoustic sets.</p>
-                    <button className="discover-action-btn">Find Stages</button>
-                  </div>
-
-                  <div className="discover-gradient-card card-blue-pink">
-                    <h4>Wellness Sessions</h4>
-                    <p>Connect with local fitness trainers, yoga sessions, runs, and healthy lifestyle clubs.</p>
-                    <button className="discover-action-btn">Book Sessions</button>
-                  </div>
-
-                  <div className="discover-gradient-card card-orange-pink">
-                    <h4>Community Hangouts</h4>
-                    <p>Meet and connect with local organizers, esports matches, running groups and social communities.</p>
-                    <button className="discover-action-btn">Meet People</button>
-                  </div>
-                </div>
-              </section>
-
-              <section className="discover-organizers-section" ref={discoverOrganizersRef}>
-                <div className="discover-organizers-header">
-                  <h3>Event Organizers</h3>
-                  <p>Tap an organizer from the map to jump to their profile here.</p>
-                </div>
-                <div className="discover-organizers-list">
-                  {EVENT_ORGANIZERS.map((organizer) => (
-                    <article
-                      key={organizer.id}
-                      id={`discover-organizer-${organizer.id}`}
-                      className={`discover-organizer-card glass-card ${
-                        discoverOrganizerId === organizer.id ? 'is-highlighted' : ''
-                      }`}
-                      onClick={() => setDiscoverOrganizerId(organizer.id)}
-                    >
-                      <img
-                        src={organizer.avatar}
-                        alt={organizer.name}
-                        className="discover-organizer-avatar"
-                      />
-                      <div className="discover-organizer-body">
-                        <div className="discover-organizer-top">
-                          <h4>{organizer.name}</h4>
-                          <span className="discover-organizer-role">{organizer.role}</span>
-                        </div>
-                        <span className="discover-organizer-username">@{organizer.username}</span>
-                        <p className="discover-organizer-bio">{organizer.bio}</p>
-                        <div className="discover-organizer-meta">
-                          <span>{organizer.location}</span>
-                          <span>{organizer.eventsHosted} events hosted</span>
-                        </div>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </section>
-            </div>
-          )}
+          {activeTab === 'discover' && <DiscoverPage />}
 
           {/* CHAT PAGE (INTERACTIVE PANEL) */}
           {activeTab === 'chat' && (
@@ -689,61 +489,6 @@ export const Layout: React.FC = () => {
         {activeTab !== 'chat' && (
           <aside className="zenex-right-panel">
             
-            {/* Membership Desktop Card */}
-            {isMembershipCardVisible && (
-              <div className="glass-card right-panel-card membership-desktop-card">
-                <button
-                  type="button"
-                  className="membership-card-close-btn"
-                  onClick={() => setIsMembershipCardVisible(false)}
-                  aria-label="Close plan manager"
-                >
-                  <X size={16} />
-                </button>
-                <div className="desktop-card-profile">
-                  <img src={avatar} alt={fullName} className="desktop-card-avatar" />
-                  <div className="desktop-card-info">
-                    <span className="desktop-card-name">{fullName}</span>
-                    <div className="desktop-card-plan-row">
-                      <span className="desktop-card-plan-label">Current Plan:</span>
-                      <span className={`plan-badge-pill badge-${membershipPlan.toLowerCase()}`}>{membershipPlan}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {membershipPlan === 'FREE' && (
-                  <div className="desktop-quick-upgrades">
-                    <div className="quick-upgrade-item">
-                      <span>Upgrade to <strong>PLUS</strong></span>
-                      <span>₹699/mo</span>
-                    </div>
-                    <div className="quick-upgrade-item">
-                      <span>Upgrade to <strong>PRO</strong></span>
-                      <span>₹999/mo</span>
-                    </div>
-                  </div>
-                )}
-
-                {membershipPlan === 'PLUS' && (
-                  <div className="desktop-quick-upgrades">
-                    <div className="quick-upgrade-item">
-                      <span>Upgrade to <strong>PRO</strong></span>
-                      <span>₹999/mo</span>
-                    </div>
-                  </div>
-                )}
-
-                <button 
-                  type="button" 
-                  className="desktop-upgrade-now-btn"
-                  onClick={() => setIsMembershipOpen(true)}
-                >
-                  <Sparkles size={14} />
-                  <span>{membershipPlan === 'PRO' ? 'Manage Plan' : 'Upgrade Now'}</span>
-                </button>
-              </div>
-            )}
-
             {/* Notifications Card */}
             <div className="glass-card right-panel-card">
               <div className="panel-heading">
@@ -926,12 +671,6 @@ export const Layout: React.FC = () => {
 
       {/* Bottom Navigation Bar (Visible on Mobile <768px) */}
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
-
-      {/* Zenex AI chatbot */}
-      <ZenexAI />
-
-      {/* Premium Membership Modal */}
-      <MembershipModal isOpen={isMembershipOpen} onClose={() => setIsMembershipOpen(false)} />
     </div>
   );
 };

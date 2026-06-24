@@ -7,19 +7,36 @@ from groq import Groq
 from sqlalchemy.orm import Session
 from database import User, UserInterest, Event, EventMember, UserConnection, Badge, UserBadge, RewardEvent, ChatRoom, Message
 
+from dotenv import load_dotenv
+
+# Ensure environment variables are loaded
+load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
+
 logger = logging.getLogger("ai_service")
 
-# Initialize Groq client
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+# Models definition
 PRIMARY_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
 FALLBACK_MODEL = "llama-3.1-8b-instant"
 
-client = None
-if GROQ_API_KEY:
+def is_groq_configured() -> bool:
+    key = os.getenv("GROQ_API_KEY")
+    if not key:
+        return False
+    key_lower = key.lower().strip()
+    if not key_lower or "your" in key_lower or "placeholder" in key_lower or key_lower == "gsk_":
+        return False
+    return True
+
+def get_groq_client():
+    if not is_groq_configured():
+        return None
+    key = os.getenv("GROQ_API_KEY")
     try:
-        client = Groq(api_key=GROQ_API_KEY)
+        return Groq(api_key=key)
     except Exception as e:
-        logger.error(f"Error initializing Groq client: {e}")
+        logger.error(f"Error details - Groq client initialization failed: {e}")
+        return None
+
 
 # Haversine distance formula
 def calculate_distance(lat1, lon1, lat2, lon2):
@@ -376,7 +393,7 @@ def build_system_prompt(user: User, db: Session) -> str:
     events_str = ", ".join([e.title for e in events])
     
     system_prompt = (
-        f"You are Zenex AI, the premium floating personal assistant for the Zenex platform.\n"
+        f"You are ZENEX AI, the premium floating personal assistant for the Zenex platform.\n"
         f"Tagline: 'Connect. Play. Experience.'\n"
         f"Purpose: You assist users with sports events, entertainment activities, local communities, social networking, rewards, and general app support.\n\n"
         f"USER CONTEXT PROFILE:\n"
@@ -399,16 +416,25 @@ def build_system_prompt(user: User, db: Session) -> str:
         f"5. Fallback: If any information is missing or tools fail, guide the user politely.\n\n"
         f"EXAMPLE DIALOGUES:\n"
         f"User: Hello\n"
-        f"Zenex AI: Hi 👋 I'm Zenex AI. How can I help you today?\n"
+        f"ZENEX AI: Hi 👋 I'm ZENEX AI. How can I help you today?\n"
         f"User: Find cricket events near me\n"
-        f"Zenex AI: I found several cricket events happening near your location."
+        f"ZENEX AI: I found several cricket events happening near your location."
     )
     return system_prompt
 
 # Main API streaming function
 def stream_response(db: Session, user: User, message_history: List[Dict[str, str]], cancel_event: Any = None) -> Generator[str, None, None]:
+    if not is_groq_configured():
+        dev_msg = "Hello 👋 I'm ZENEX AI. The AI backend is currently in development mode."
+        logger.info("Groq is not configured. Streaming development mode message.")
+        yield dev_msg
+        return
+
+    client = get_groq_client()
     if not client:
-        yield "Error: Groq API Key is not configured. Please add `GROQ_API_KEY` to the `backend/.env` file."
+        fallback_msg = "Hi 👋 I'm ZENEX AI. My AI services are temporarily unavailable, but I'm still online. Please try again in a few moments."
+        logger.warning("Groq client creation failed. Streaming fallback message.")
+        yield fallback_msg
         return
 
     system_prompt = build_system_prompt(user, db)
@@ -420,7 +446,7 @@ def stream_response(db: Session, user: User, message_history: List[Dict[str, str
         
     try:
         # 1. Primary Model Call
-        logger.info(f"Calling primary model: {PRIMARY_MODEL}")
+        logger.info(f"Request sent to Groq. Primary Model: {PRIMARY_MODEL}")
         response = client.chat.completions.create(
             model=PRIMARY_MODEL,
             messages=api_messages,
@@ -428,8 +454,10 @@ def stream_response(db: Session, user: User, message_history: List[Dict[str, str
             tool_choice="auto",
             stream=False  # Do not stream first if we need to check for tool calls
         )
+        logger.info("Response received from Groq (Primary Model first call successful)")
     except Exception as e:
-        logger.warning(f"Primary model call failed: {e}. Attempting fallback model: {FALLBACK_MODEL}")
+        logger.warning(f"Error details - Primary model call failed: {e}. Attempting fallback model: {FALLBACK_MODEL}")
+        logger.info(f"Request sent to Groq. Fallback Model: {FALLBACK_MODEL}")
         try:
             # Fallback model call
             response = client.chat.completions.create(
@@ -439,9 +467,11 @@ def stream_response(db: Session, user: User, message_history: List[Dict[str, str
                 tool_choice="auto",
                 stream=False
             )
+            logger.info("Response received from Groq (Fallback Model call successful)")
         except Exception as fallback_e:
-            logger.error(f"Fallback model also failed: {fallback_e}")
-            yield f"Error: Groq API call failed. Details: {str(fallback_e)}"
+            logger.error(f"Error details - Fallback model also failed: {fallback_e}")
+            fallback_msg = "Hi 👋 I'm ZENEX AI. My AI services are temporarily unavailable, but I'm still online. Please try again in a few moments."
+            yield fallback_msg
             return
 
     # Check for tool/function calls
@@ -455,6 +485,7 @@ def stream_response(db: Session, user: User, message_history: List[Dict[str, str
         # Execute each tool call and add the results to history
         for tool_call in tool_calls:
             if cancel_event and cancel_event.is_set():
+                logger.info("Stream generation cancelled by client before tool execution.")
                 yield "[Generation Cancelled]"
                 return
                 
@@ -471,15 +502,15 @@ def stream_response(db: Session, user: User, message_history: List[Dict[str, str
             
         # Re-submit to the model to generate the final response with the tool output
         try:
-            logger.info("Re-submitting with tool output...")
-            # We stream the final response after tool execution
+            logger.info(f"Request sent to Groq (Re-submit streaming). Primary Model: {PRIMARY_MODEL}")
             stream = client.chat.completions.create(
                 model=PRIMARY_MODEL,
                 messages=api_messages,
                 stream=True
             )
         except Exception as stream_e:
-            logger.warning(f"Re-submitting failed with primary model: {stream_e}. Attempting fallback...")
+            logger.warning(f"Error details - Re-submitting failed with primary model: {stream_e}. Attempting fallback...")
+            logger.info(f"Request sent to Groq (Re-submit streaming). Fallback Model: {FALLBACK_MODEL}")
             try:
                 stream = client.chat.completions.create(
                     model=FALLBACK_MODEL,
@@ -487,13 +518,15 @@ def stream_response(db: Session, user: User, message_history: List[Dict[str, str
                     stream=True
                 )
             except Exception as stream_fallback_e:
-                logger.error(f"Fallback streaming also failed: {stream_fallback_e}")
-                yield f"Error during streaming completion: {str(stream_fallback_e)}"
+                logger.error(f"Error details - Fallback streaming also failed: {stream_fallback_e}")
+                fallback_msg = "Hi 👋 I'm ZENEX AI. My AI services are temporarily unavailable, but I'm still online. Please try again in a few moments."
+                yield fallback_msg
                 return
                 
         # Yield the streamed final content
         for chunk in stream:
             if cancel_event and cancel_event.is_set():
+                logger.info("Stream generation cancelled by client during streaming.")
                 yield "[Generation Cancelled]"
                 return
             content = chunk.choices[0].delta.content
@@ -509,6 +542,8 @@ def stream_response(db: Session, user: User, message_history: List[Dict[str, str
             chunk_size = 15
             for i in range(0, len(content), chunk_size):
                 if cancel_event and cancel_event.is_set():
+                    logger.info("Stream generation cancelled by client during synchronous chunking.")
                     yield "[Generation Cancelled]"
                     return
                 yield content[i:i+chunk_size]
+
